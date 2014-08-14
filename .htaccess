@@ -1,2 +1,2 @@
 RewriteEngine on
-RewriteRule ^/?(.*)$ index.php
+RewriteRule ^/?(.*)$ Framework/index.php

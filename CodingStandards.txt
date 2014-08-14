@@ -2,7 +2,7 @@
 abstract class CapitalCamelCase { // No new line for curly braces, space before it
   private static $_lowerCaseCamel = 'hello';
   private $_notStatic = 'goodbye';
-  public $Public = 'HELLO!';
+  public $publicVariable = 'HELLO!';
 
   function __construct($lowerCaseCamel) {
     $
