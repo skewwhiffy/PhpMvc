@@ -38,7 +38,8 @@ class ViewRenderer {
             '$model->%s');
     $tempFile = tmpfile();
     fwrite($tempFile, $modelNoEchoesReplaced);
-    include stream_get_meta_data($tempFile)['uri'];
+    $metaData = stream_get_meta_data($tempFile);
+    include $metaData['uri'];
   }
   
   private function Replace($source, $openTag, $closeTag, $codeFormat) {
