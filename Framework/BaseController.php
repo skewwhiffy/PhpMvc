@@ -23,7 +23,7 @@ abstract class BaseController {
     }
     $viewPath = $this->JoinPaths($this->pathToViews, $viewName . 'View.php');
     $renderer = new ViewRenderer($viewPath);
-    $renderer->Render($model);
+    $renderer->RenderAndOutput($model);
   }
   
   protected function ImportModel($modelName = null){
@@ -31,8 +31,7 @@ abstract class BaseController {
       $callers = debug_backtrace();
       $modelName = $callers[1]['function'];
     }
-    $modelPath = $this->JoinPaths($this->pathToModels, $modelName . 'Model.php');
-    require_once($modelPath);
+    require_once($this->JoinPaths($this->pathToModels, $modelName . 'Model.php'));
   }
 
   private function JoinPaths() {

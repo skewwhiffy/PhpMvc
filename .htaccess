@@ -1,2 +1,2 @@
 RewriteEngine on
-RewriteRule ^/?(.*)$ Framework/index.php
+RewriteRule ^/?(.*)$ Framework/Router.php

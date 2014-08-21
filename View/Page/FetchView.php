@@ -1,8 +1,5 @@
-<html>
-  <head>
-    <title><@=title@></title>
-  </head>
-  <body>
-    <p><?php echo $Mtitle__; ?></p>
-  </body>
-</html>
+<@ template = 'Common/TemplateMaster' @>
+<@ templateModel = $model @>
+<@ content = 'main' @>
+<p><?php echo $model->title; ?></p>
+<@ endContent @>
