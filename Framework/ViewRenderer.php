@@ -4,17 +4,19 @@ require_once 'ViewTag.php';
 
 class ViewRenderer {
 
-  private $pathToFile;
+  private $viewName;
   private $modelsData = array();
   private $openTag = '<@';
   private $closeTag = '@>';
+  private $fileReader;
 
-  public function __construct($pathToFile) {
-    $this->pathToFile = $pathToFile;
+  public function __construct($viewName) {
+    $this->fileReader = new FileReader();
+    $this->viewName = $viewName;
   }
 
   public function RenderAndOutput($model) {
-    $viewCode = file_get_contents($this->pathToFile);
+    $viewCode = $this->fileReader->GetViewCode($this->viewName);
     $toOutput = $this->Render($model, $viewCode);
     $tempFile = tmpfile();
     $tempFileLocation = stream_get_meta_data($tempFile)['uri'];
@@ -43,14 +45,54 @@ class ViewRenderer {
     $this->modelsData[$modelName] = $model;
     $rendered = str_replace('$model', $modelName, $modelEchoesReplaced);
 
-    $inTemplate = $this->ApplyTemplate($rendered, $tags);
+    $inTemplate = $this->ApplyTemplate($rendered);
 
     return $inTemplate;
   }
 
-  private function ApplyTemplate($rendered, $tags) {
+  private function ApplyTemplate($rendered) {
+    $tags = $this->GetAllAtTags($rendered);
     $templateCode = $this->GetTemplateCode($tags);
-    return $rendered;
+    if ($templateCode === false) {
+      return $rendered;
+    }
+    $templateModel;
+    foreach ($this->modelsData as $modelName => $modelValue) {
+      eval("$modelName = \$modelValue;");
+    }
+    foreach ($tags as $tag) {
+      if (strcasecmp($tag->key, 'templatemodel') === 0) {
+        eval("\$templateModel = $tag->value;");
+        break;
+      }
+    }
+    $renderedTemplate = $this->Render($templateModel, $templateCode);
+    $templateTags = $this->GetAllAtTags($renderedTemplate);
+    $contents = $this->GetContents($rendered, $tags);
+    foreach ($templateTags as $tag) {
+      if (strcasecmp($tag->key, 'contentholder') === 0) {
+        $renderedTemplate = str_replace($tag->raw, $contents[$tag->value], $renderedTemplate);
+      }
+    }
+    return $renderedTemplate;
+  }
+
+  private function GetContents($rendered, $tags) {
+    $contents = array();
+    $startIndex;
+    $contentName;
+    foreach ($tags as $tag) {
+      if (strcasecmp($tag->key, 'content') === 0) {
+        $startIndex = $tag->endIndex;
+        $contentName = $tag->value;
+      }
+      if (strcasecmp($tag->key, 'endcontent') === 0) {
+        $endIndex = $tag->startIndex - 1;
+        $content = substr($rendered, $startIndex, $endIndex - $startIndex);
+        $contents[$contentName] = $content;
+      }
+    }
+    return $contents;
   }
 
   private function GetTemplateCode($tags) {
@@ -62,15 +104,13 @@ class ViewRenderer {
       if ($templateName !== false) {
         throw new RuntimeException('Template name not unique');
       }
-      $templateName = $tag->value;
+      $templateName = str_replace('\'', '', $tag->value);
+      ;
     }
     if ($templateName === false) {
       return $templateName;
     }
-    $templateName = str_replace('\'', '', $templateName);
-    echo "You've found the template name; now get and render the template\n";
-    var_dump($templateName);
-    exit;
+    return $this->fileReader->GetViewCode($templateName);
   }
 
   private function GetAllAtTags($viewCode) {
@@ -100,7 +140,7 @@ class ViewRenderer {
       }
       $indexOfCloseTag = strpos($source, $closeTag, $indexOfOpenTag + 1);
       if ($indexOfCloseTag === false) {
-        throw new RuntimeException("$openTag not closed in $this->pathToFile");
+        throw new RuntimeException("$openTag not closed in $this->viewName");
       }
       $code = substr(
               $source, $indexOfOpenTag + strlen($openTag), $indexOfCloseTag - $indexOfOpenTag - strlen($openTag));

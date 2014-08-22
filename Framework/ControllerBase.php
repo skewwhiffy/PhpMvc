@@ -1,18 +1,18 @@
 <?php
 
-abstract class BaseController {
+require_once 'FileReader.php';
 
-  private $pathToViews;
+abstract class ControllerBase {
+
+  private $baseName;
   
-  private $pathToModels;
+  private $fileReader;
 
   public function __construct() {
     $controllerName = get_class($this);
-    $baseName = substr(
-            $controllerName, 0, strlen($controllerName) - strlen('Controller'));
-    $projectRoot = '../';
-    $this->pathToViews = $this->JoinPaths($projectRoot, 'View', $baseName);
-    $this->pathToModels = $this->JoinPaths($projectRoot, 'Model', $baseName);
+    $baseNameLength = strlen($controllerName) - strlen('Controller');
+    $this->baseName = substr($controllerName, 0, $baseNameLength);
+    $this->fileReader = new FileReader();
   }
   
   protected function Render($model = null, $viewName = null) {
@@ -21,8 +21,7 @@ abstract class BaseController {
       $callers = debug_backtrace();
       $viewName = $callers[1]['function'];
     }
-    $viewPath = $this->JoinPaths($this->pathToViews, $viewName . 'View.php');
-    $renderer = new ViewRenderer($viewPath);
+    $renderer = new ViewRenderer("$this->baseName/$viewName");
     $renderer->RenderAndOutput($model);
   }
   
@@ -31,15 +30,7 @@ abstract class BaseController {
       $callers = debug_backtrace();
       $modelName = $callers[1]['function'];
     }
-    require_once($this->JoinPaths($this->pathToModels, $modelName . 'Model.php'));
-  }
-
-  private function JoinPaths() {
-    $slash = DIRECTORY_SEPARATOR;
-    $arguments = func_get_args();
-    $sections = preg_split(
-            "@[/\\\\]@", implode('/', $arguments), null, PREG_SPLIT_NO_EMPTY);
-    return implode($slash, $sections);
+    require_once($this->fileReader->GetModelPath("$this->baseName/$modelName"));
   }
 
 }

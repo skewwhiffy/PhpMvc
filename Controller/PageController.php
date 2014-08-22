@@ -1,6 +1,6 @@
 <?php
 
-class PageController extends BaseController {
+class PageController extends ControllerBase {
   public function Fetch($page) {
     $this->ImportModel();
     $model = new FetchModel();
