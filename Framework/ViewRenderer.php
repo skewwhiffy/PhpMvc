@@ -22,7 +22,7 @@ class ViewRenderer {
     $tempFileLocation = stream_get_meta_data($tempFile)['uri'];
     fwrite($tempFile, $toOutput);
     foreach ($this->modelsData as $modelName => $modelValue) {
-      eval("$modelName = \$modelValue;");
+      $$modelName = $modelValue;
     }
     include $tempFileLocation;
   }
@@ -34,16 +34,14 @@ class ViewRenderer {
    */
 
   private function Render($model, $viewCode) {
-    $tags = $this->GetAllAtTags($viewCode);
-
     $openTagEcho = '<@=';
     $closeTagEcho = '@>';
-    $modelName = '$mm' . uniqid();
+    $modelName = 'mm' . uniqid();
 
     $modelEchoesReplaced = $this->Replace(
-            $viewCode, $openTagEcho, $closeTagEcho, "<?php echo $modelName->%s;?>");
+            $viewCode, $openTagEcho, $closeTagEcho, "<?php echo $$modelName->%s;?>");
     $this->modelsData[$modelName] = $model;
-    $rendered = str_replace('$model', $modelName, $modelEchoesReplaced);
+    $rendered = str_replace('$model', "$$modelName", $modelEchoesReplaced);
 
     $inTemplate = $this->ApplyTemplate($rendered);
 
@@ -56,16 +54,7 @@ class ViewRenderer {
     if ($templateCode === false) {
       return $rendered;
     }
-    $templateModel;
-    foreach ($this->modelsData as $modelName => $modelValue) {
-      eval("$modelName = \$modelValue;");
-    }
-    foreach ($tags as $tag) {
-      if (strcasecmp($tag->key, 'templatemodel') === 0) {
-        eval("\$templateModel = $tag->value;");
-        break;
-      }
-    }
+    $templateModel = $this->GetTemplateModel($tags);
     $renderedTemplate = $this->Render($templateModel, $templateCode);
     $templateTags = $this->GetAllAtTags($renderedTemplate);
     $contents = $this->GetContents($rendered, $tags);
@@ -76,11 +65,22 @@ class ViewRenderer {
     }
     return $renderedTemplate;
   }
+  
+  private function GetTemplateModel($tags) {
+    
+    foreach ($this->modelsData as $modelName => $modelValue) {
+      $$modelName = $modelValue;
+    }
+    foreach ($tags as $tag) {
+      if (strcasecmp($tag->key, 'templatemodel') === 0) {
+        return eval("return $tag->value;");
+        break;
+      }
+    }
+  }
 
   private function GetContents($rendered, $tags) {
     $contents = array();
-    $startIndex;
-    $contentName;
     foreach ($tags as $tag) {
       if (strcasecmp($tag->key, 'content') === 0) {
         $startIndex = $tag->endIndex;
@@ -105,7 +105,6 @@ class ViewRenderer {
         throw new RuntimeException('Template name not unique');
       }
       $templateName = str_replace('\'', '', $tag->value);
-      ;
     }
     if ($templateName === false) {
       return $templateName;
