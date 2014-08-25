@@ -1,23 +1,24 @@
 <?php
 
+require_once 'FilePathHelper.php';
+
 class ImageController extends ControllerBase {
 
   private $fileReader;
   
+  private $filePathHelper;
+  
   public function __construct() {
     parent::__construct();
     $this->fileReader = new FileReader();
+    $this->filePathHelper = new FilePathHelper();
   }
   
   public function Index($args) {
-    $elements = count($args);
-    if ($elements === 1 && strcasecmp($args[0], 'favicon') === 0) {
-      $image = 'favicon';
-    } else {
-      throw new BadMethodCallException();
-    }
-    $fileName = $this->fileReader->GetImagePath($image);
-    header('Content-Type:image/jpeg');
+    $imageName = $this->filePathHelper->JoinPaths($args);
+    $image = new ImageDetails($this->fileReader->pathToImages, $imageName);
+    $fileName = $image->path;
+    header($image->contentTypeHeader);
     readfile($fileName);
   }
 
