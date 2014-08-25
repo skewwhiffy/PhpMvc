@@ -5,7 +5,6 @@ class FetchModel {
 
   public $paragraphs;
 }
-
 class Paragraph {
   public $heading;
 

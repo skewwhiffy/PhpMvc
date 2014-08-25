@@ -2,7 +2,7 @@
 
 require_once 'FilePathHelper.php';
 
-class ImageController extends ControllerBase {
+class CssController extends ControllerBase {
 
   private $fileReader;
   private $filePathHelper;
@@ -14,10 +14,9 @@ class ImageController extends ControllerBase {
   }
 
   public function Index($args) {
-    $imageName = $this->filePathHelper->JoinPaths($args);
-    $image = new ImageDetails($this->fileReader->pathToImages, $imageName);
-    $fileName = $image->path;
-    header($image->contentTypeHeader);
+    $cssName = $this->filePathHelper->JoinPaths($args);
+    $fileName = $this->filePathHelper->JoinPaths($this->fileReader->pathToCss, $cssName . '.css');
+    header('Content-type:text/css');
     readfile($fileName);
   }
 
