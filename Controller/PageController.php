@@ -12,6 +12,6 @@ class PageController extends ControllerBase {
     $paragraph -> text = "You want jazz; you got it";
     $paragraphs[] = new Paragraph();
     $model -> paragraphs = $paragraphs;
-    $this->Render($model);;
+    $this->Render($model);
   }
 }
