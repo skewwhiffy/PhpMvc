@@ -23,24 +23,32 @@ class FilePathHelper {
     return implode($this->slash, $sections);
   }
 
-  public function FileExists($fileName, $caseSensitive = false) {
-
+  public function FileExists($fileName) {
     if (file_exists($fileName)) {
       return $fileName;
     }
-    if ($caseSensitive) {
-      return false;
-    }
+    return $this->FileExistsInternal('', explode($this->slash, $fileName));
+  }
 
-    $directoryName = dirname($fileName);
-    $fileArray = glob($directoryName . '/*', GLOB_NOSORT);
-    $fileNameLowerCase = strtolower($fileName);
+  private function FileExistsInternal($start, $exploded) {
+    if (count($exploded) === 0) {
+      return $start;
+    }
+    $next = $exploded[0];
+    $nextSearch = $this->JoinPaths($start, $next);
+    if ($next === '..') {
+        $newExploded = array_slice($exploded, 1);
+        return $this->FileExistsInternal($nextSearch, $newExploded);
+    }
+    $fileArray = glob($start . '/*', GLOB_NOSORT);
+    $nextLowerCase = strtolower($nextSearch);
     foreach ($fileArray as $file) {
-      if (strtolower($file) == $fileNameLowerCase) {
-        return $file;
+      if (strtolower($file) == $nextLowerCase) {
+        $newStart = $file;
+        $newExploded = array_slice($exploded, 1);
+        return $this->FileExistsInternal($newStart, $newExploded);
       }
     }
     return false;
   }
-
 }
