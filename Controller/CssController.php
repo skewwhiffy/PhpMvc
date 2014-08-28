@@ -1,10 +1,10 @@
 <?php
-
 require_once 'FilePathHelper.php';
 
 class CssController extends ControllerBase {
 
   private $fileReader;
+
   private $filePathHelper;
 
   public function __construct() {
@@ -19,5 +19,4 @@ class CssController extends ControllerBase {
     header('Content-type:text/css');
     readfile($fileName);
   }
-
 }

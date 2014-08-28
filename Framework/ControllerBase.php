@@ -1,10 +1,10 @@
 <?php
-
 require_once 'FileReader.php';
 
 abstract class ControllerBase {
 
   private $baseName;
+
   private $fileReader;
 
   public function __construct() {
@@ -18,7 +18,7 @@ abstract class ControllerBase {
     require_once 'ViewRenderer.php';
     if ($viewName === null) {
       $callers = debug_backtrace();
-      $viewName = $callers[1]['function'];
+      $viewName = $callers [1] ['function'];
     }
     $renderer = new ViewRenderer("$this->baseName/$viewName");
     $renderer->RenderAndOutput($model);
@@ -27,9 +27,8 @@ abstract class ControllerBase {
   protected function ImportModel($modelName = null) {
     if ($modelName === null) {
       $callers = debug_backtrace();
-      $modelName = $callers[1]['function'];
+      $modelName = $callers [1] ['function'];
     }
-    require_once($this->fileReader->GetModelPath("$this->baseName/$modelName"));
+    require_once ($this->fileReader->GetModelPath("$this->baseName/$modelName"));
   }
-
 }

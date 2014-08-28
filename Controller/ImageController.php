@@ -1,10 +1,10 @@
 <?php
-
 require_once 'FilePathHelper.php';
 
 class ImageController extends ControllerBase {
 
   private $fileReader;
+
   private $filePathHelper;
 
   public function __construct() {
@@ -20,5 +20,4 @@ class ImageController extends ControllerBase {
     header($image->contentTypeHeader);
     readfile($fileName);
   }
-
 }

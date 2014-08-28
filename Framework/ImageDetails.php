@@ -3,11 +3,15 @@
 class ImageDetails {
 
   private $filePathHelper;
-  private $pathToImages;
-  private $imageName;
-  public $path;
-  public $contentTypeHeader;
 
+  private $pathToImages;
+
+  private $imageName;
+
+  public $path;
+
+  public $contentTypeHeader;
+  
   // So far, this only supports jpg files
   // TODO: Support other types
   public function __construct($pathToImages, $imageName) {
@@ -18,5 +22,4 @@ class ImageDetails {
     $this->path = $this->filePathHelper->FileExists($path);
     $this->contentTypeHeader = 'Content-Type:image/jpeg';
   }
-
 }

@@ -1,14 +1,17 @@
 <?php
-
 require_once 'ImageDetails.php';
 require_once 'FilePathHelper.php';
 
 class FileReader {
 
   private $filePathHelper;
+
   public $pathToViews;
+
   public $pathToModels;
+
   public $pathToImages;
+
   public $pathToCss;
 
   public function __construct() {
@@ -31,5 +34,4 @@ class FileReader {
   public function GetViewCode($viewName) {
     return file_get_contents($this->GetViewPath($viewName));
   }
-
 }

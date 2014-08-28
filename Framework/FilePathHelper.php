@@ -10,16 +10,15 @@ class FilePathHelper {
 
   public function JoinPaths() {
     $arguments = func_get_args();
-    if (count($arguments) === 1 && is_array($arguments[0])) {
-      return $this->JoinPathsArray($arguments[0]);
+    if (count($arguments) === 1 && is_array($arguments [0])) {
+      return $this->JoinPathsArray($arguments [0]);
     } else {
       return $this->JoinPathsArray($arguments);
     }
   }
 
   private function JoinPathsArray($arguments) {
-    $sections = preg_split(
-            "@[/\\\\]@", implode('/', $arguments), null, PREG_SPLIT_NO_EMPTY);
+    $sections = preg_split("@[/\\\\]@", implode('/', $arguments), null, PREG_SPLIT_NO_EMPTY);
     return implode($this->slash, $sections);
   }
 
@@ -34,15 +33,15 @@ class FilePathHelper {
     if (count($exploded) === 0) {
       return $start;
     }
-    $next = $exploded[0];
+    $next = $exploded [0];
     $nextSearch = $this->JoinPaths($start, $next);
     if ($next === '..') {
-        $newExploded = array_slice($exploded, 1);
-        return $this->FileExistsInternal($nextSearch, $newExploded);
+      $newExploded = array_slice($exploded, 1);
+      return $this->FileExistsInternal($nextSearch, $newExploded);
     }
     $fileArray = glob($start . '/*', GLOB_NOSORT);
     $nextLowerCase = strtolower($nextSearch);
-    foreach ($fileArray as $file) {
+    foreach ( $fileArray as $file ) {
       if (strtolower($file) == $nextLowerCase) {
         $newStart = $file;
         $newExploded = array_slice($exploded, 1);
