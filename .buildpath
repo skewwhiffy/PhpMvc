@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <buildpath>
-	<buildpathentry kind="src" path="Model/Page"/>
 	<buildpathentry excluding="Common/|Page/" kind="src" path="View"/>
-	<buildpathentry kind="src" path="Framework"/>
 	<buildpathentry kind="src" path="View/Page"/>
-	<buildpathentry kind="src" path="Css"/>
 	<buildpathentry excluding="Page/" kind="src" path="Model"/>
 	<buildpathentry kind="src" path="View/Common"/>
-	<buildpathentry kind="lib" path=".metadata/.mylyn/repositories.xml.zip"/>
-	<buildpathentry kind="src" path="Controller"/>
 	<buildpathentry kind="src" path="Database"/>
 	<buildpathentry kind="src" path="Image"/>
 	<buildpathentry kind="con" path="org.eclipse.php.core.LANGUAGE"/>
+	<buildpathentry kind="src" path="Model/Page"/>
+	<buildpathentry kind="src" path="Framework"/>
+	<buildpathentry kind="src" path="Css"/>
+	<buildpathentry kind="lib" path=".metadata/.mylyn/repositories.xml.zip"/>
+	<buildpathentry kind="src" path="Controller"/>
+	<buildpathentry kind="con" path="org.eclipse.dltk.USER_LIBRARY/PEAR"/>
 </buildpath>

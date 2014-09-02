@@ -22,7 +22,8 @@ class ViewRenderer {
     $viewCode = $this->fileReader->GetViewCode($this->viewName);
     $toOutput = $this->Render($model, $viewCode);
     $tempFile = tmpfile();
-    $tempFileLocation = stream_get_meta_data($tempFile)['uri'];
+	$metaData = stream_get_meta_data($tempFile);
+    $tempFileLocation = $metaData['uri'];
     fwrite($tempFile, $toOutput);
     foreach ( $this->modelsData as $modelName => $modelValue ) {
       $$modelName = $modelValue;

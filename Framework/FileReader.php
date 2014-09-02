@@ -28,7 +28,7 @@ class FileReader {
   }
 
   public function GetViewPath($viewName) {
-    return $this->filePathHelper->JoinPaths($this->pathToViews, $viewName . '.php');
+    return $this->filePathHelper->JoinPaths($this->pathToViews, "$viewName.php");
   }
 
   public function GetViewCode($viewName) {
