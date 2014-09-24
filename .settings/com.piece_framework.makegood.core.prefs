@@ -1,0 +1,6 @@
+eclipse.preferences.version=1
+phpunit_config_file=/CacahuetesAngularRest/Test/phpunit.xml
+preload_script=
+test_file_pattern=
+test_folders=/CacahuetesAngularRest/Test
+testing_framework=PHPUnit

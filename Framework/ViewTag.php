@@ -17,18 +17,18 @@ class ViewTag {
     public $value;
 
     public function __construct($openTag, $closeTag, $startIndex, $code) {
-        $this -> openTag = $openTag;
-        $this -> closeTag = $closeTag;
-        $this -> startIndex = $startIndex;
-        $this -> endIndex = $this -> GetCloseTagPosition($code);
-        $this -> raw = substr($code, $startIndex, $this -> endIndex - $startIndex);
+        $this->openTag = $openTag;
+        $this->closeTag = $closeTag;
+        $this->startIndex = $startIndex;
+        $this->endIndex = $this -> GetCloseTagPosition($code);
+        $this->raw = substr($code, $startIndex, $this -> endIndex - $startIndex);
         $openTagLength = strlen($this -> openTag);
         $closeTagLength = strlen($this -> closeTag);
         $contentsLength = strlen($this -> raw) - $openTagLength - $closeTagLength;
         $contents = substr($this -> raw, $openTagLength, $contentsLength);
         $contentsSplitCleaned = $this -> SplitAndClean($contents);
-        $this -> key = $contentsSplitCleaned[0];
-        $this -> value = $this -> GetValue($contentsSplitCleaned);
+        $this->key = $contentsSplitCleaned[0];
+        $this->value = $this->GetValue($contentsSplitCleaned);
     }
     private function SplitAndClean($source) {
         $split = explode('=', $source);
