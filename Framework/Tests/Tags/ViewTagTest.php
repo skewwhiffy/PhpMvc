@@ -17,7 +17,7 @@ class ViewTagTest extends \PHPUnit_Framework_TestCase
     private $openTag = '<@';
     private $closeTag = '@@>';
 
-    public function testFirstTagExtractedCorrectly()
+    public function testSingleTagExtractedCorrectly()
     {
         $key = 'key';
         $value = 'value';
@@ -30,7 +30,30 @@ class ViewTagTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($value, $tag->getValue());
     }
 
-    public function testKeyAndValueTrimmed(){
+    public function testCodeBeforeExtractedCorrectly()
+    {
+        $key = 'key';
+        $value = 'value';
+        $contents = "$this->openTag$key = $value$this->closeTag";
+        $codeBefore = 'This is the code before, yes it is';
+
+        $tag = $this->constructViewTag("$codeBefore$contents");
+
+        $this->assertEquals($codeBefore, $tag->getCodeBefore());
+    }
+
+    public function testFirstOfTwoTagsExtractedCorrectly()
+    {
+        $firstTagKey = 'hello';
+        $remainder = ' <@ hello2 @@>';
+        $tag = $this->constructViewTag("<@ $firstTagKey @@>$remainder");
+
+        $this->assertEquals($firstTagKey, $tag->getKey());
+        $this->assertEquals($remainder, $tag->getCodeAfter());
+    }
+
+    public function testKeyAndValueTrimmed()
+    {
         $key = 'key';
         $value = 'value';
         $contents = " $key  =   $value    ";
@@ -40,10 +63,11 @@ class ViewTagTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($contents, $tag->getContents());
         $this->assertEquals($key, $tag->getKey());
         $this->assertEquals($value, $tag->getValue());
-        $this->assertEquals('', $tag->getRemainderCode());
+        $this->assertEquals('', $tag->getCodeAfter());
     }
 
-    public function testValueNull() {
+    public function testValueNull()
+    {
         $key = 'key';
 
         $tag = $this->constructViewTag("$this->openTag $key  $this->closeTag");
@@ -52,13 +76,15 @@ class ViewTagTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($tag->getValue());
     }
 
-    public function testEmptyThrows() {
+    public function testEmptyThrows()
+    {
         $this->setExpectedException(get_class(new TagWithNoContentException()));
 
         $this->constructViewTag("$this->openTag  $this->closeTag");
     }
 
-    public function testRemainderCodeCorrect(){
+    public function testRemainderCodeCorrect()
+    {
         $key = 'key';
         $value = 'value';
         $contents = " $key  =   $value    ";
@@ -67,17 +93,18 @@ class ViewTagTest extends \PHPUnit_Framework_TestCase
 
         $tag = $this->constructViewTag($code);
 
-        $this->assertEquals($tag->getRemainderCode(), $remainder);
+        $this->assertEquals($tag->getCodeAfter(), $remainder);
     }
 
-    public function testGetTagsWorks() {
+    public function testGetTagsWorks()
+    {
         $open = $this->openTag;
         $close = $this->closeTag;
         $keys = array('key1', 'key2', 'key3', 'key4', 'key5', 'key6');
         $values = array('value1', 'value2', null, 'value4', null, 'value6');
         $spaces = 0;
         $contents = array();
-        for($i = 0; $i < sizeof($keys); $i++){
+        for ($i = 0; $i < sizeof($keys); $i++) {
             $key = $keys[$i];
             $value = $values[$i];
             $preSpaces = str_repeat(' ', $spaces++);
@@ -93,7 +120,7 @@ class ViewTagTest extends \PHPUnit_Framework_TestCase
         }
         $count = 1;
         $code = '';
-        for($i = 0; $i < sizeof($contents); $i++){
+        for ($i = 0; $i < sizeof($contents); $i++) {
             $code .= str_repeat(' ', $count++);
             $code .= "pre$i";
             $code .= str_repeat(' ', $count++);
@@ -106,6 +133,10 @@ class ViewTagTest extends \PHPUnit_Framework_TestCase
         $tags = ViewTag::getTags($open, $close, $code);
 
         $this->assertEquals(sizeof($contents), sizeof($tags));
+        for ($i = 0; $i < sizeof($tags); $i++) {
+            $this->assertEquals($keys[$i], $tags[$i]->getKey());
+            $this->assertEquals($values[$i], $tags[$i]->getValue());
+        }
     }
 
     /**

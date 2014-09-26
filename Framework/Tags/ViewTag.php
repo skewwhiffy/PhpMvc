@@ -36,16 +36,18 @@ class ViewTag
     private $remainderIndex;
 
     /** @var string */
-    private $remainderCode;
+    private $codeBefore;
+
+    /** @var string */
+    private $codeAfter;
 
     /**
      * @param string $openTag
      * @param string $closeTag
      * @param string $code
-     * @param int $startIndex
      * @throws TagWithNoContentException
      */
-    public function __construct($openTag, $closeTag, $code, $startIndex = 0)
+    public function __construct($openTag, $closeTag, $code)
     {
         $this->openTag = $openTag;
         $this->closeTag = $closeTag;
@@ -64,7 +66,13 @@ class ViewTag
     public static function getTags($openTag, $closeTag, $code)
     {
         $tags = array();
-        return $tags; // TODO
+        $remainingCode = $code;
+        while (strpos($remainingCode, $openTag) !== false) {
+            $newTag = new ViewTag($openTag, $closeTag, $remainingCode);
+            $tags[] = $newTag;
+            $remainingCode = $newTag->getCodeAfter();
+        }
+        return $tags;
     }
 
     /** @return string */
@@ -73,8 +81,8 @@ class ViewTag
         if (!is_null($this->contents)) {
             return $this->contents;
         }
-        $startIndex = strrpos($this->code, $this->openTag);
-        $tagContentsStartIndex = $startIndex + strlen($this->openTag);
+        $this->startIndex = strpos($this->code, $this->openTag);
+        $tagContentsStartIndex = $this->startIndex + strlen($this->openTag);
         $tagContentsEndIndex = $this->getEndIndex();
         $contentsLength = $tagContentsEndIndex - $tagContentsStartIndex;
         $this->contents = substr($this->code, $tagContentsStartIndex, $contentsLength);
@@ -94,7 +102,7 @@ class ViewTag
     private function getEndIndex()
     {
         if (is_null($this->endIndex)) {
-            $this->endIndex = strrpos($this->code, $this->closeTag, $this->getStartIndex());
+            $this->endIndex = strpos($this->code, $this->closeTag, $this->getStartIndex());
         }
         return $this->endIndex;
     }
@@ -114,12 +122,20 @@ class ViewTag
     }
 
     /** @return string */
-    public function getRemainderCode()
-    {
-        if (is_null($this->remainderCode)) {
-            $this->remainderCode = substr($this->code, $this->getRemainderIndex());
+    public function getCodeBefore(){
+        if (is_null($this->codeBefore)) {
+            $this->codeBefore = substr($this->code, 0, $this->getStartIndex());
         }
-        return $this->remainderCode;
+        return $this->codeBefore;
+    }
+
+    /** @return string */
+    public function getCodeAfter()
+    {
+        if (is_null($this->codeAfter)) {
+            $this->codeAfter = substr($this->code, $this->getRemainderIndex());
+        }
+        return $this->codeAfter;
     }
 
     /** @return int */
