@@ -1,18 +1,21 @@
 <?php
-namespace Framework\Tags;
+namespace Framework\Templating\Tags;
 
 require_once '/Exceptions/TagWithNoContentException.php';
+require_once 'IViewTag.php';
 
 use Framework\Exceptions\TagWithNoContentException;
 
 /**
  * Class ViewTag
- * @package Framework\Tags
+ * @package Framework\Templating\Tags
  */
-class ViewTag
+class ViewTag implements IViewTag
 {
     /** @var string */
-    private $openTag;
+    const OPEN_TAG = '<@';
+
+    const CLOSE_TAG = '@@>';
 
     /** @var string */
     private $code;
@@ -42,15 +45,11 @@ class ViewTag
     private $codeAfter;
 
     /**
-     * @param string $openTag
-     * @param string $closeTag
      * @param string $code
      * @throws TagWithNoContentException
      */
-    public function __construct($openTag, $closeTag, $code)
+    public function __construct($code)
     {
-        $this->openTag = $openTag;
-        $this->closeTag = $closeTag;
         $this->code = $code;
         if (trim($this->getContents()) === '') {
             throw new TagWithNoContentException();
@@ -58,70 +57,80 @@ class ViewTag
     }
 
     /**
-     * @param string $openTag
-     * @param string $closeTag
      * @param string $code
      * @return ViewTag[]
      */
-    public static function getTags($openTag, $closeTag, $code)
+    public static function getTags($code)
     {
-        $tags = array();
+        $tags = [];
         $remainingCode = $code;
-        while (strpos($remainingCode, $openTag) !== false) {
-            $newTag = new ViewTag($openTag, $closeTag, $remainingCode);
+        while (strpos($remainingCode, self::OPEN_TAG) !== false) {
+            $newTag = new ViewTag($remainingCode);
             $tags[] = $newTag;
             $remainingCode = $newTag->getCodeAfter();
         }
         return $tags;
     }
 
-    /** @return string */
+    /**
+     * @return string
+     */
     public function getContents()
     {
         if (!is_null($this->contents)) {
             return $this->contents;
         }
-        $this->startIndex = strpos($this->code, $this->openTag);
-        $tagContentsStartIndex = $this->startIndex + strlen($this->openTag);
+        $this->startIndex = strpos($this->code, self::OPEN_TAG);
+        $tagContentsStartIndex = $this->startIndex + strlen(self::OPEN_TAG);
         $tagContentsEndIndex = $this->getEndIndex();
         $contentsLength = $tagContentsEndIndex - $tagContentsStartIndex;
         $this->contents = substr($this->code, $tagContentsStartIndex, $contentsLength);
         return $this->contents;
     }
 
-    /** @return int */
+    /**
+     * @return int
+     */
     private function getStartIndex()
     {
         if (is_null($this->startIndex)) {
-            $this->startIndex = strrpos($this->code, $this->openTag);
+            $this->startIndex = strrpos($this->code, self::OPEN_TAG);
         }
         return $this->startIndex;
     }
 
-    /** @return int */
+    /**
+     * @return int
+     */
     private function getEndIndex()
     {
         if (is_null($this->endIndex)) {
-            $this->endIndex = strpos($this->code, $this->closeTag, $this->getStartIndex());
+            $this->endIndex = strpos($this->code, self::CLOSE_TAG, $this->getStartIndex());
         }
         return $this->endIndex;
     }
 
-    /** @return string */
+    /**
+     * @return string
+     */
     public function getKey()
     {
         $this->populateKeyAndValue();
         return $this->key;
     }
 
-    /** @return string */
+    /**
+     * @return string
+     */
     public function getValue()
     {
         $this->populateKeyAndValue();
         return $this->value;
     }
 
-    /** @return string */
+    /**
+     * @return string
+     */
     public function getCodeBefore(){
         if (is_null($this->codeBefore)) {
             $this->codeBefore = substr($this->code, 0, $this->getStartIndex());
@@ -129,7 +138,9 @@ class ViewTag
         return $this->codeBefore;
     }
 
-    /** @return string */
+    /**
+     * @return string
+     */
     public function getCodeAfter()
     {
         if (is_null($this->codeAfter)) {
@@ -138,11 +149,13 @@ class ViewTag
         return $this->codeAfter;
     }
 
-    /** @return int */
+    /**
+     * @return int
+     */
     private function getRemainderIndex()
     {
         if (is_null($this->remainderIndex)) {
-            $this->remainderIndex = $this->getEndIndex() + strlen($this->closeTag);
+            $this->remainderIndex = $this->getEndIndex() + strlen(self::CLOSE_TAG);
         }
         return $this->remainderIndex;
     }

@@ -1,11 +1,10 @@
 <?php
+namespace Framework\Tests\Templating\Tags;
 
-namespace Framework\Tests\Tags;
-
-require_once '/Tags/ViewTag.php';
+require_once '/Templating/Tags/ViewTag.php';
 require_once '/Exceptions/TagWithNoContentException.php';
 
-use Framework\Tags\ViewTag;
+use Framework\Templating\Tags\ViewTag;
 use Framework\Exceptions\TagWithNoContentException;
 
 /**
@@ -14,8 +13,8 @@ use Framework\Exceptions\TagWithNoContentException;
  */
 class ViewTagTest extends \PHPUnit_Framework_TestCase
 {
-    private $openTag = '<@';
-    private $closeTag = '@@>';
+    private $openTag = ViewTag::OPEN_TAG;
+    private $closeTag = ViewTag::CLOSE_TAG;
 
     public function testSingleTagExtractedCorrectly()
     {
@@ -23,6 +22,8 @@ class ViewTagTest extends \PHPUnit_Framework_TestCase
         $value = 'value';
         $contents = "$key=$value";
 
+        echo "HELLO";
+        echo "$this->openTag$contents$this->closeTag";
         $tag = $this->constructViewTag("$this->openTag$contents$this->closeTag");
 
         $this->assertEquals($contents, $tag->getContents());
@@ -130,7 +131,7 @@ class ViewTagTest extends \PHPUnit_Framework_TestCase
         $code .= 'end';
         $code .= str_repeat(' ', $count);
 
-        $tags = ViewTag::getTags($open, $close, $code);
+        $tags = ViewTag::getTags($code);
 
         $this->assertEquals(sizeof($contents), sizeof($tags));
         for ($i = 0; $i < sizeof($tags); $i++) {
@@ -141,12 +142,11 @@ class ViewTagTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $code
-     * @param int $startIndex
      * @return ViewTag
      */
-    private function constructViewTag($code, $startIndex = 0)
+    private function constructViewTag($code)
     {
-        return new ViewTag($this->openTag, $this->closeTag, $code, $startIndex);
+        return new ViewTag($code);
     }
 }
  
