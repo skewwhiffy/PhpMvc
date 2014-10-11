@@ -1,8 +1,6 @@
 <?php
 namespace Framework\Templating\Html;
 
-require_once '/Templating/Tags/ViewTag.php';
-
 use \Framework\Templating\Tags\ViewTag;
 
 /**

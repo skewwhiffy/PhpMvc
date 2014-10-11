@@ -1,8 +1,5 @@
 <?php
-namespace Framework\Tests\Templating\Html;
-
-require_once '/Templating/Tags/ViewTag.php';
-require_once '/Templating/Html/HtmlElement.php';
+require_once __DIR__.'/../../../Includes.php';
 
 use Framework\Templating\Html\HtmlElement;
 
@@ -10,7 +7,7 @@ use Framework\Templating\Html\HtmlElement;
  * Class HtmlElementTest
  * @package Framework\Tests\Templating\Html
  */
-class HtmlElementTest extends \PHPUnit_Framework_TestCase
+class HtmlElementTest extends PHPUnit_Framework_TestCase
 {
     public function testPersistsText()
     {

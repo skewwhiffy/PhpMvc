@@ -1,6 +1,5 @@
 <?php
 namespace Framework\Templating\Html;
-
 /**
  * Interface IDocumentElement
  */

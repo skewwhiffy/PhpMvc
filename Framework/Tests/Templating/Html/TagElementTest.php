@@ -1,7 +1,5 @@
 <?php
-namespace Framework\Tests\Templating\Html;
-
-require_once '/Templating/Html/TagElement.php';
+require_once __DIR__.'/../../../Includes.php';
 
 use Framework\Templating\Html\TagElement;
 use Framework\Templating\Tags\ViewTag;
@@ -10,7 +8,7 @@ use Framework\Templating\Tags\ViewTag;
  * Class TagElementTest
  * @package Framework\Tests\Templating\Html;
  */
-class TagElementTest extends \PHPUnit_Framework_TestCase {
+class TagElementTest extends PHPUnit_Framework_TestCase {
 
     private $openTag = ViewTag::OPEN_TAG;
 

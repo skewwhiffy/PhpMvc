@@ -1,7 +1,5 @@
 <?php
-namespace Framework\Tests\Templating\Html;
-
-require_once '/Templating/Html/Document.php';
+require_once __DIR__.'/../../../Includes.php';
 
 use Framework\Templating\Html\Document;
 use Framework\Templating\Html\HtmlElement;
@@ -12,7 +10,7 @@ use Framework\Templating\Tags\ViewTag;
  * Class DocumentTest
  * @package Framework\Tests\Templating\Html
  */
-class DocumentTest extends \PHPUnit_Framework_TestCase
+class DocumentTest extends PHPUnit_Framework_TestCase
 {
     private $openTag = ViewTag::OPEN_TAG;
     private $closeTag = ViewTag::CLOSE_TAG;
@@ -48,6 +46,15 @@ class DocumentTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('goodbye', $goodbyeTag->getKey());
         $this->assertEquals('hello', $goodbyeTag->getValue());
         $this->assertEquals(' end', $this->asHtmlElement($elements[4])->getCode());
+    }
+
+    public function testExpressionTagsAreRendered(){
+        $code = '<h1>3 + 4 is <@=3+4 @@></h1>';
+        $document = new Document($code);
+
+        $rendered = $document->renderExpressionTags(null);
+
+        $this->assertThat($rendered, $this->stringContains('echo'));
     }
 
     /**

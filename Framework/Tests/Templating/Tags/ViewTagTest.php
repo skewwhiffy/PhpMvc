@@ -1,8 +1,5 @@
 <?php
-namespace Framework\Tests\Templating\Tags;
-
-require_once '/Templating/Tags/ViewTag.php';
-require_once '/Exceptions/TagWithNoContentException.php';
+require_once __DIR__ . '/../../../Includes.php';
 
 use Framework\Templating\Tags\ViewTag;
 use Framework\Exceptions\TagWithNoContentException;
@@ -11,7 +8,7 @@ use Framework\Exceptions\TagWithNoContentException;
  * Class ViewTagTest
  * @package Framework\Tests\Tags
  */
-class ViewTagTest extends \PHPUnit_Framework_TestCase
+class ViewTagTest extends PHPUnit_Framework_TestCase
 {
     private $openTag = ViewTag::OPEN_TAG;
     private $closeTag = ViewTag::CLOSE_TAG;
@@ -22,8 +19,6 @@ class ViewTagTest extends \PHPUnit_Framework_TestCase
         $value = 'value';
         $contents = "$key=$value";
 
-        echo "HELLO";
-        echo "$this->openTag$contents$this->closeTag";
         $tag = $this->constructViewTag("$this->openTag$contents$this->closeTag");
 
         $this->assertEquals($contents, $tag->getContents());
@@ -77,6 +72,14 @@ class ViewTagTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($tag->getValue());
     }
 
+    public function testKeyNull()
+    {
+        $tag = $this->constructViewTag('<h1>3 + 4 is <@=3+4 @@></h1>');
+
+        $this->assertThat($tag->getValue(), $this->equalTo('3+4'));;
+        $this->assertThat($tag->getKey(), $this->isEmpty());
+    }
+
     public function testEmptyThrows()
     {
         $this->setExpectedException(get_class(new TagWithNoContentException()));
@@ -105,7 +108,8 @@ class ViewTagTest extends \PHPUnit_Framework_TestCase
         $values = array('value1', 'value2', null, 'value4', null, 'value6');
         $spaces = 0;
         $contents = array();
-        for ($i = 0; $i < sizeof($keys); $i++) {
+        for ($i = 0; $i < sizeof($keys); $i++)
+        {
             $key = $keys[$i];
             $value = $values[$i];
             $preSpaces = str_repeat(' ', $spaces++);
@@ -113,7 +117,8 @@ class ViewTagTest extends \PHPUnit_Framework_TestCase
             $postEqualsSpaces = str_repeat(' ', $spaces++);
             $postSpaces = str_repeat(' ', $spaces++);
             $content = "$open$preSpaces$key";
-            if (!is_null($value)) {
+            if (!is_null($value))
+            {
                 $content .= "$preEqualsSpaces=$postEqualsSpaces$value";
             }
             $content .= "$postSpaces$close";
@@ -121,7 +126,8 @@ class ViewTagTest extends \PHPUnit_Framework_TestCase
         }
         $count = 1;
         $code = '';
-        for ($i = 0; $i < sizeof($contents); $i++) {
+        for ($i = 0; $i < sizeof($contents); $i++)
+        {
             $code .= str_repeat(' ', $count++);
             $code .= "pre$i";
             $code .= str_repeat(' ', $count++);
@@ -134,14 +140,26 @@ class ViewTagTest extends \PHPUnit_Framework_TestCase
         $tags = ViewTag::getTags($code);
 
         $this->assertEquals(sizeof($contents), sizeof($tags));
-        for ($i = 0; $i < sizeof($tags); $i++) {
+        for ($i = 0; $i < sizeof($tags); $i++)
+        {
             $this->assertEquals($keys[$i], $tags[$i]->getKey());
             $this->assertEquals($values[$i], $tags[$i]->getValue());
         }
     }
 
+    public function testGetTagCodeWorks()
+    {
+        $code = "$this->openTag key = value $this->closeTag";
+        $mixedIn = "before, before<h1 />$code<div/>after after";
+
+        $result = $this->constructViewTag($mixedIn)->getTagCode();
+
+        $this->assertThat($result, $this->equalTo($code));
+    }
+
     /**
      * @param string $code
+     *
      * @return ViewTag
      */
     private function constructViewTag($code)

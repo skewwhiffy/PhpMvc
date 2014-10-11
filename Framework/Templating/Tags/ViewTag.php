@@ -1,9 +1,6 @@
 <?php
 namespace Framework\Templating\Tags;
 
-require_once '/Exceptions/TagWithNoContentException.php';
-require_once 'IViewTag.php';
-
 use Framework\Exceptions\TagWithNoContentException;
 
 /**
@@ -86,6 +83,13 @@ class ViewTag implements IViewTag
         $contentsLength = $tagContentsEndIndex - $tagContentsStartIndex;
         $this->contents = substr($this->code, $tagContentsStartIndex, $contentsLength);
         return $this->contents;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTagCode(){
+        return self::OPEN_TAG . $this->getContents() . self::CLOSE_TAG;
     }
 
     /**

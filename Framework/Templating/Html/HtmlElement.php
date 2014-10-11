@@ -1,7 +1,6 @@
 <?php
 namespace Framework\Templating\Html;
 
-require_once 'IDocumentElement.php';
 /**
  * Class HtmlElement
  * @package Framework\Templating\Html
