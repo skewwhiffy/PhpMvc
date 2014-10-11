@@ -26,18 +26,8 @@ class PhpRenderer
         fwrite($temporaryFile, $code);
         $temporaryFilename = stream_get_meta_data($temporaryFile)['uri'];
         ob_start();
-        try
-        {
-            include $temporaryFilename;
-        }
-        catch (\Exception $e)
-        {
-        }
-        if (empty($e))
-        {
-            return ob_get_clean();
-        }
-        throw $e;
+        include $temporaryFilename;
+        return ob_get_clean();
     }
 
     /**
