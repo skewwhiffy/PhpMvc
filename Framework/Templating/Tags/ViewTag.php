@@ -4,6 +4,37 @@ namespace Framework\Templating\Tags;
 use Framework\Exceptions\TagWithNoContentException;
 
 /**
+ * Interface IViewTag
+ * @package Framework\Templating\Tags
+ */
+interface IViewTag {
+    /**
+     * @return string
+     */
+    public function getContents();
+
+    /**
+     * @return string
+     */
+    public function getKey();
+
+    /**
+     * @return string
+     */
+    public function getValue();
+
+    /**
+     * @return string
+     */
+    public function getCodeBefore();
+
+    /**
+     * @return string
+     */
+    public function getCodeAfter();
+}
+
+/**
  * Class ViewTag
  * @package Framework\Templating\Tags
  */
