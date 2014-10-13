@@ -10,19 +10,28 @@ class ViewRenderer
 
     /**
      * @param IFileReader $viewFileReader
+     * @param PhpRenderer $phpRenderer
      */
-    public function __construct($viewFileReader)
+    public function __construct($viewFileReader, $phpRenderer = null)
     {
+        if (empty($phpRenderer))
+        {
+            $phpRenderer = new PhpRenderer();
+        }
         $this->viewFileReader = $viewFileReader;
+        $this->phpRenderer = $phpRenderer;
     }
 
     /**
      * @param string $viewName
      *
+     * @param mixed  $model
+     *
      * @return string
      */
-    public function render($viewName)
+    public function render($viewName, $model = null)
     {
-        return $this->viewFileReader->readFile($viewName);;
+        $code = $this->viewFileReader->readFile($viewName);
+        return $this->phpRenderer->renderToHtml($code);
     }
 }

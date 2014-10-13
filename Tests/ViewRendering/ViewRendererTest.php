@@ -10,27 +10,58 @@ use Framework\ViewRendering\IFileReader;
  */
 class ViewRendererTest extends PHPUnit_Framework_TestCase
 {
-    /** @var ViewRenderer */
-    private $viewRenderer;
-
-    /** @var MockFileReader */
+    /** @var PHPUnit_Framework_MockObject_MockObject | IFileReader */
     private $fileReader;
 
-    public function setUp()
-    {
-        $this->fileReader = new MockFileReader();
-        $this->viewRenderer = new ViewRenderer($this->fileReader);
+    /** @var array */
+    private $views;
+
+    public function setUp(){
+        $this->fileReader = $this->getMock('Framework\ViewRendering\IFileReader');
+        $this->views = [];
     }
 
     public function testPlainHtmlViewWorks()
     {
         $viewName = 'view';
         $code = '<h1>This just works</h1>';
-        $this->fileReader->addView($viewName, $code);
+        $this->addView($viewName, $code);
+        $renderer = $this->getRenderer();
 
-        $result = $this->viewRenderer->render($viewName);
+        $result = $renderer->render($viewName);
 
         $this->assertThat($result, $this->equalTo($code));
+    }
+
+    public function testStaticPhpWorks()
+    {
+        $viewName = 'view';
+        $code = 'This just works <?php echo 7;?> times';
+        $this->addView($viewName, $code);
+        $renderer = $this->getRenderer();
+
+        $result = $renderer->render($viewName);
+
+        $this->assertThat($result, $this->equalTo('This just works 7 times'));
+    }
+
+    /**
+     * @return \Framework\ViewRendering\ViewRenderer
+     */
+    private function getRenderer(){
+        $this->fileReader
+            ->method('readFile')
+            ->will($this->returnValueMap($this->views));
+        return new ViewRenderer($this->fileReader);
+    }
+
+    /**
+     * @param string $viewName
+     * @param string $code
+     */
+    private function addView($viewName, $code)
+    {
+        $this->views[] = [$viewName, $code];
     }
 }
 
