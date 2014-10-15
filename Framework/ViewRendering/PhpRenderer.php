@@ -8,7 +8,7 @@ namespace Framework\ViewRendering;
 class PhpRenderer
 {
     /** @var array */
-    private $variables = array();
+    private $variables = [];
 
     /**
      * @param string $code

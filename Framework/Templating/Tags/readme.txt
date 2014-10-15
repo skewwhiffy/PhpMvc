@@ -4,7 +4,7 @@ ViewTags come in different flavours.
 This is a template tag. The path to the template is BLAH_TEMPLATE. The templater
 will look inside the /Content/Views/ folder for the template.
 
-<@ templatemodel = $model.getTemplateModel() @>
+<@ templatemodel = $model.getTemplateModel() @@>
 This is a template model tag, used to define how the template's model is defined,
 usually from the model passed to the view.
 

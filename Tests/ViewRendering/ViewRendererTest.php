@@ -16,7 +16,8 @@ class ViewRendererTest extends PHPUnit_Framework_TestCase
     /** @var array */
     private $views;
 
-    public function setUp(){
+    public function setUp()
+    {
         $this->fileReader = $this->getMock('Framework\ViewRendering\IFileReader');
         $this->views = [];
     }
@@ -45,11 +46,61 @@ class ViewRendererTest extends PHPUnit_Framework_TestCase
         $this->assertThat($result, $this->equalTo('This just works 7 times'));
     }
 
+    public function testModelWorks()
+    {
+        $viewName = 'view';
+        $code = 'This just works <?php echo $model; ?> times';
+        $this->addView($viewName, $code);
+        $renderer = $this->getRenderer();
+
+        $result = $renderer->render($viewName, 50);
+
+        $this->assertThat($result, $this->equalTo('This just works 50 times'));
+    }
+
+    public function testExpressionTagsWork()
+    {
+        $viewName = 'view';
+        $code = 'This just works <@= $model @@> times';
+        $this->addView($viewName, $code);
+        $renderer = $this->getRenderer();
+
+        $result = $renderer->render($viewName, 50);
+
+        $this->assertThat($result, $this->equalTo('This just works 50 times'));
+    }
+
+    public function testTemplaterWorks(){
+        $viewName = 'view';
+        $code =
+'<@template = templateView@@>
+<@content=contentMarker@@>
+This is the content
+<@endContent@@>';
+        $templateViewName = 'templateView';
+        $templateCode =
+'This is before the container
+<@container=contentMarker@@>
+This is after the container';
+        $this->addView($viewName, $code);
+        $this->addView($templateViewName, $templateCode);
+        $renderer = $this->getRenderer();
+
+        $result = $renderer->render($viewName, 50);
+
+        $this->assertThat($result, $this->equalTo(
+'This is before the container
+This is the content
+This is after the container'));;
+    }
+
     /**
      * @return \Framework\ViewRendering\ViewRenderer
      */
-    private function getRenderer(){
+    private function getRenderer()
+    {
         $this->fileReader
+            ->expects($this->any())
             ->method('readFile')
             ->will($this->returnValueMap($this->views));
         return new ViewRenderer($this->fileReader);

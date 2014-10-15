@@ -1,6 +1,8 @@
 <?php
 namespace Framework\ViewRendering;
 
+use Framework\Templating\Html\Document;
+
 /**
  * Class ViewRenderer
  */
@@ -27,11 +29,15 @@ class ViewRenderer
      *
      * @param mixed  $model
      *
+     * @throws \ErrorException
      * @return string
      */
     public function render($viewName, $model = null)
     {
         $code = $this->viewFileReader->readFile($viewName);
-        return $this->phpRenderer->renderToHtml($code);
+        $document = new Document($code);
+        $phpCode = $document->renderExpressionTags();
+        $this->phpRenderer->addVariable('model', $model);
+        return $this->phpRenderer->renderToHtml($phpCode);
     }
 }

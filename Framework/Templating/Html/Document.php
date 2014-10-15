@@ -1,6 +1,8 @@
 <?php
 namespace Framework\Templating\Html;
 
+use Framework\Exceptions\UnrecognizedElementTypeException;
+use Framework\Exceptions\UnrecognizedTagTypeException;
 use Framework\Templating\Tags\ViewTag;
 
 
@@ -29,15 +31,18 @@ class Document
      */
     public function getElements()
     {
-        if ($this->elements !== null){
+        if ($this->elements !== null)
+        {
             return $this->elements;
         }
         $tags = ViewTag::getTags($this->code);
-        if (empty($tags)) {
+        if (empty($tags))
+        {
             return [new HtmlElement($this->code)];
         }
         $elements = [];
-        foreach ($tags as $tag) {
+        foreach ($tags as $tag)
+        {
             $elements[] = new HtmlElement($tag->getCodeBefore());
             $elements[] = new TagElement($tag);
         }
@@ -49,7 +54,8 @@ class Document
     }
 
     /**
-     * @throws \ErrorException
+     * @throws UnrecognizedElementTypeException
+     * @throws UnrecognizedTagTypeException
      * @internal param $model
      *
      * @returns string
@@ -57,27 +63,30 @@ class Document
     public function renderExpressionTags()
     {
         $rendered = '';
-        foreach($this->getElements() as $element){
-            if (is_a($element, 'Framework\Templating\Html\TagElement')){
+        foreach ($this->getElements() as $element)
+        {
+            if ($element instanceof TagElement)
+            {
                 /** @var TagElement $tagElement */
                 $tagElement = $element;
                 $tag = $tagElement->getTag();
                 $key = $tag->getKey();
                 $value = $tag->getValue();
-                if (empty($key)) {
+                if (empty($key))
+                {
                     $rendered .= "<?php echo $value;?>";
                     continue;
                 }
-                $rendered .= $tag->getContents();
+                throw new UnrecognizedTagTypeException($tag);
             }
-            if (is_a($element, 'Framework\Templating\Html\HtmlElement')) {
+            if ($element instanceof HtmlElement)
+            {
                 /** @var HtmlElement $htmlElement */
                 $htmlElement = $element;
                 $rendered .= $htmlElement->getCode();
                 continue;
             }
-            var_dump($element);
-            throw new \ErrorException('Unrecognized element type: ' . gettype($element));
+            throw new UnrecognizedElementTypeException($element);
         }
 
         return $rendered;

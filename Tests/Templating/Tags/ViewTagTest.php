@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../../../Framework/Includes.php';
 
+use Framework\Exceptions\OpenTagNotClosedException;
 use Framework\Templating\Tags\ViewTag;
 use Framework\Exceptions\TagWithNoContentException;
 
@@ -82,9 +83,17 @@ class ViewTagTest extends PHPUnit_Framework_TestCase
 
     public function testEmptyThrows()
     {
-        $this->setExpectedException(get_class(new TagWithNoContentException()));
+        $this->setExpectedException(get_class(new TagWithNoContentException(null)));
 
         $this->constructViewTag("$this->openTag  $this->closeTag");
+    }
+
+    public function testNonMatchingOpenTagThrows(){
+        $this->setExpectedException(get_class(new OpenTagNotClosedException(null)));
+
+        $tag = $this->constructViewTag("$this->openTag blah blah blah");
+
+        var_dump($tag);
     }
 
     public function testRemainderCodeCorrect()
