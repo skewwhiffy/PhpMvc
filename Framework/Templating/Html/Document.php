@@ -77,6 +77,7 @@ class Document
                     $rendered .= "<?php echo $value;?>";
                     continue;
                 }
+                // TODO
                 throw new UnrecognizedTagTypeException($tag);
             }
             if ($element instanceof HtmlElement)
