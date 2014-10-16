@@ -2,7 +2,7 @@
 namespace Framework\Exceptions;
 
 use Exception;
-use Framework\Templating\Html\TagElement;
+use Framework\Templating\Tags\IViewTag;
 
 /**
  * Class UnrecognizedTagTypeException
@@ -11,9 +11,10 @@ use Framework\Templating\Html\TagElement;
 class UnrecognizedTagTypeException extends Exception
 {
     /**
-     * @param TagElement $tag
+     * @param IViewTag $tag
      */
     public function __construct($tag){
-
+        $contents = $tag->getContents();
+        parent::__construct("Contents are: '$contents'");
     }
 } 

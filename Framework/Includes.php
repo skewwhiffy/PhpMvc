@@ -15,3 +15,5 @@ require_once __DIR__.'/Common/PathExtensions.php';
 require_once __DIR__.'/Exceptions/TagWithNoContentException.php';
 require_once __DIR__.'/Exceptions/OpenTagNotClosedException.php';
 require_once __DIR__.'/Exceptions/UnrecognizedElementTypeException.php';
+require_once __DIR__.'/Exceptions/UnrecognizedTagTypeException.php';
+
