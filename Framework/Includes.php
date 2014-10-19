@@ -24,5 +24,7 @@ require_once __DIR__.'/ViewRendering/PhpRenderer.php';
 require_once __DIR__.'/ViewRendering/FileReader.php';
 require_once __DIR__.'/ViewRendering/ViewRenderer.php';
 require_once __DIR__.'/Common/PathExtensions.php';
+require_once __DIR__ . '/Routing/Request.php';
+require_once __DIR__.'/Routing/UriManipulator.php';
 
 
