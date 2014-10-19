@@ -36,7 +36,14 @@ class ViewRenderer
     {
         $code = $this->viewFileReader->readFile($viewName);
         $document = new Document($code);
-        $phpCode = $document->renderExpressionTags();
+        while ($document->hasTemplate())
+        {
+            $templateCode = $this->viewFileReader->readFile($document->templateName());
+            $templateDocument = new Document($templateCode);
+            $templateDocument->addContent($document);
+            $document = $templateDocument;
+        }
+        $phpCode = $document->render();
         $this->phpRenderer->addVariable('model', $model);
         return $this->phpRenderer->renderToHtml($phpCode);
     }

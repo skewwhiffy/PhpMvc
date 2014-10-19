@@ -1,7 +1,9 @@
 <?php
-require_once __DIR__ . '/../../../Framework/Includes.php';
+require_once __DIR__ . '/../../Includes.php';
 
+use Framework\Constants\Constants;
 use Framework\Exceptions\OpenTagNotClosedException;
+use Framework\Templating\Tags\TagExtractor;
 use Framework\Templating\Tags\ViewTag;
 use Framework\Exceptions\TagWithNoContentException;
 
@@ -11,8 +13,15 @@ use Framework\Exceptions\TagWithNoContentException;
  */
 class ViewTagTest extends PHPUnit_Framework_TestCase
 {
-    private $openTag = ViewTag::OPEN_TAG;
-    private $closeTag = ViewTag::CLOSE_TAG;
+    private $openTag = Constants::openTag;
+    private $closeTag = Constants::closeTag;
+    /** @var TagFactory */
+    private $tags;
+
+    public function setUp()
+    {
+        $this->tags = new TagFactory();
+    }
 
     public function testSingleTagExtractedCorrectly()
     {
@@ -20,7 +29,7 @@ class ViewTagTest extends PHPUnit_Framework_TestCase
         $value = 'value';
         $contents = "$key=$value";
 
-        $tag = $this->constructViewTag("$this->openTag$contents$this->closeTag");
+        $tag = $this->constructViewTag($this->tags->inTags($contents));
 
         $this->assertEquals($contents, $tag->getContents());
         $this->assertEquals($key, $tag->getKey());
@@ -31,7 +40,7 @@ class ViewTagTest extends PHPUnit_Framework_TestCase
     {
         $key = 'key';
         $value = 'value';
-        $contents = "$this->openTag$key = $value$this->closeTag";
+        $contents = $this->tags->inTags("$key = $value");
         $codeBefore = 'This is the code before, yes it is';
 
         $tag = $this->constructViewTag("$codeBefore$contents");
@@ -42,8 +51,8 @@ class ViewTagTest extends PHPUnit_Framework_TestCase
     public function testFirstOfTwoTagsExtractedCorrectly()
     {
         $firstTagKey = 'hello';
-        $remainder = ' <@ hello2 @@>';
-        $tag = $this->constructViewTag("<@ $firstTagKey @@>$remainder");
+        $remainder = $this->tags->inTags('hello2');
+        $tag = $this->constructViewTag($this->tags->inTags($firstTagKey) . $remainder);
 
         $this->assertEquals($firstTagKey, $tag->getKey());
         $this->assertEquals($remainder, $tag->getCodeAfter());
@@ -55,7 +64,7 @@ class ViewTagTest extends PHPUnit_Framework_TestCase
         $value = 'value';
         $contents = " $key  =   $value    ";
 
-        $tag = $this->constructViewTag("$this->openTag$contents$this->closeTag");
+        $tag = $this->constructViewTag($this->tags->inTags($contents));
 
         $this->assertEquals($contents, $tag->getContents());
         $this->assertEquals($key, $tag->getKey());
@@ -67,7 +76,7 @@ class ViewTagTest extends PHPUnit_Framework_TestCase
     {
         $key = 'key';
 
-        $tag = $this->constructViewTag("$this->openTag $key  $this->closeTag");
+        $tag = $this->constructViewTag($this->tags->inTags($key));
 
         $this->assertEquals($key, $tag->getKey());
         $this->assertNull($tag->getValue());
@@ -75,7 +84,7 @@ class ViewTagTest extends PHPUnit_Framework_TestCase
 
     public function testKeyNull()
     {
-        $tag = $this->constructViewTag('<h1>3 + 4 is <@=3+4 @@></h1>');
+        $tag = $this->constructViewTag('<h1>3 + 4 is ' . $this->tags->inTags('=3+4') . '</h1>');
 
         $this->assertThat($tag->getValue(), $this->equalTo('3+4'));;
         $this->assertThat($tag->getKey(), $this->isEmpty());
@@ -85,10 +94,11 @@ class ViewTagTest extends PHPUnit_Framework_TestCase
     {
         $this->setExpectedException(get_class(new TagWithNoContentException(null)));
 
-        $this->constructViewTag("$this->openTag  $this->closeTag");
+        $this->constructViewTag($this->tags->inTags('  '));
     }
 
-    public function testNonMatchingOpenTagThrows(){
+    public function testNonMatchingOpenTagThrows()
+    {
         $this->setExpectedException(get_class(new OpenTagNotClosedException(null)));
 
         $tag = $this->constructViewTag("$this->openTag blah blah blah");
@@ -102,7 +112,7 @@ class ViewTagTest extends PHPUnit_Framework_TestCase
         $value = 'value';
         $contents = " $key  =   $value    ";
         $remainder = 'This is the remainder of the code';
-        $code = "before text $this->openTag$contents$this->closeTag$remainder";
+        $code = 'before text ' . $this->tags->inTags($contents) .$remainder;
 
         $tag = $this->constructViewTag($code);
 
@@ -113,10 +123,10 @@ class ViewTagTest extends PHPUnit_Framework_TestCase
     {
         $open = $this->openTag;
         $close = $this->closeTag;
-        $keys = array('key1', 'key2', 'key3', 'key4', 'key5', 'key6');
-        $values = array('value1', 'value2', null, 'value4', null, 'value6');
+        $keys = ['key1', 'key2', 'key3', 'key4', 'key5', 'key6'];
+        $values = ['value1', 'value2', null, 'value4', null, 'value6'];
         $spaces = 0;
-        $contents = array();
+        $contents = [];
         for ($i = 0; $i < sizeof($keys); $i++)
         {
             $key = $keys[$i];
@@ -146,7 +156,8 @@ class ViewTagTest extends PHPUnit_Framework_TestCase
         $code .= 'end';
         $code .= str_repeat(' ', $count);
 
-        $tags = ViewTag::getTags($code);
+        $tagExtractor = new TagExtractor();
+        $tags = $tagExtractor->getTags($code);
 
         $this->assertEquals(sizeof($contents), sizeof($tags));
         for ($i = 0; $i < sizeof($tags); $i++)
@@ -158,7 +169,7 @@ class ViewTagTest extends PHPUnit_Framework_TestCase
 
     public function testGetTagCodeWorks()
     {
-        $code = "$this->openTag key = value $this->closeTag";
+        $code = $this->tags->inTags(' key = value ');
         $mixedIn = "before, before<h1 />$code<div/>after after";
 
         $result = $this->constructViewTag($mixedIn)->getTagCode();

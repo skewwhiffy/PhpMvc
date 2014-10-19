@@ -3,14 +3,6 @@
 namespace Framework\Common;
 
 /**
- * Interface IPathExtensions
- * @package Framework\Common
- */
-interface IPathExtensions{
-    function joinPaths();
-}
-
-/**
  * Class PathExtensions
  * @package Framework\Common
  */

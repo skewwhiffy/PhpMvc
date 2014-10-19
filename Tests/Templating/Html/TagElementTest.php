@@ -1,6 +1,7 @@
 <?php
-require_once __DIR__ . '/../../../Framework/Includes.php';
+require_once __DIR__ . '/../../Includes.php';
 
+use Framework\Constants\Constants;
 use Framework\Templating\Html\TagElement;
 use Framework\Templating\Tags\ViewTag;
 
@@ -10,9 +11,9 @@ use Framework\Templating\Tags\ViewTag;
  */
 class TagElementTest extends PHPUnit_Framework_TestCase {
 
-    private $openTag = ViewTag::OPEN_TAG;
+    private $openTag = Constants::openTag;
 
-    private $closeTag = ViewTag::CLOSE_TAG;
+    private $closeTag = Constants::closeTag;
 
     public function testPersistsTag() {
         $tag = new ViewTag("$this->openTag code $this->closeTag");

@@ -1,40 +1,9 @@
 <?php
 namespace Framework\Templating\Tags;
 
+use Framework\Constants\Constants;
 use Framework\Exceptions\OpenTagNotClosedException;
 use Framework\Exceptions\TagWithNoContentException;
-
-/**
- * Interface IViewTag
- * @package Framework\Templating\Tags
- */
-interface IViewTag
-{
-    /**
-     * @return string
-     */
-    public function getContents();
-
-    /**
-     * @return string
-     */
-    public function getKey();
-
-    /**
-     * @return string
-     */
-    public function getValue();
-
-    /**
-     * @return string
-     */
-    public function getCodeBefore();
-
-    /**
-     * @return string
-     */
-    public function getCodeAfter();
-}
 
 /**
  * Class ViewTag
@@ -42,11 +11,6 @@ interface IViewTag
  */
 class ViewTag implements IViewTag
 {
-    /** @var string */
-    const OPEN_TAG = '<@';
-
-    const CLOSE_TAG = '@@>';
-
     /** @var string */
     private $code;
 
@@ -89,24 +53,6 @@ class ViewTag implements IViewTag
     }
 
     /**
-     * @param string $code
-     *
-     * @return ViewTag[]
-     */
-    public static function getTags($code)
-    {
-        $tags = [];
-        $remainingCode = $code;
-        while (strpos($remainingCode, self::OPEN_TAG) !== false)
-        {
-            $newTag = new ViewTag($remainingCode);
-            $tags[] = $newTag;
-            $remainingCode = $newTag->getCodeAfter();
-        }
-        return $tags;
-    }
-
-    /**
      * @return string
      */
     public function getContents()
@@ -115,8 +61,8 @@ class ViewTag implements IViewTag
         {
             return $this->contents;
         }
-        $this->startIndex = strpos($this->code, self::OPEN_TAG);
-        $tagContentsStartIndex = $this->startIndex + strlen(self::OPEN_TAG);
+        $this->startIndex = strpos($this->code, Constants::openTag);
+        $tagContentsStartIndex = $this->startIndex + strlen(Constants::openTag);
         $tagContentsEndIndex = $this->getEndIndex();
         $contentsLength = $tagContentsEndIndex - $tagContentsStartIndex;
         $this->contents = substr($this->code, $tagContentsStartIndex, $contentsLength);
@@ -128,7 +74,7 @@ class ViewTag implements IViewTag
      */
     public function getTagCode()
     {
-        return self::OPEN_TAG . $this->getContents() . self::CLOSE_TAG;
+        return Constants::openTag . $this->getContents() . Constants::closeTag;
     }
 
     /**
@@ -138,7 +84,7 @@ class ViewTag implements IViewTag
     {
         if (is_null($this->startIndex))
         {
-            $this->startIndex = strrpos($this->code, self::OPEN_TAG);
+            $this->startIndex = strrpos($this->code, Constants::openTag);
         }
         return $this->startIndex;
     }
@@ -150,7 +96,7 @@ class ViewTag implements IViewTag
     {
         if (is_null($this->endIndex))
         {
-            $this->endIndex = strpos($this->code, self::CLOSE_TAG, $this->getStartIndex());
+            $this->endIndex = strpos($this->code, Constants::closeTag, $this->getStartIndex());
             if ($this->endIndex === false)
             {
                 throw new OpenTagNotClosedException($this->code);
@@ -208,7 +154,7 @@ class ViewTag implements IViewTag
     {
         if (is_null($this->remainderIndex))
         {
-            $this->remainderIndex = $this->getEndIndex() + strlen(self::CLOSE_TAG);
+            $this->remainderIndex = $this->getEndIndex() + strlen(Constants::closeTag);
         }
         return $this->remainderIndex;
     }

@@ -13,8 +13,17 @@ class UnrecognizedTagTypeException extends Exception
     /**
      * @param IViewTag $tag
      */
-    public function __construct($tag){
+    public function __construct($tag)
+    {
         $contents = $tag->getContents();
         parent::__construct("Contents are: '$contents'");
+    }
+
+    /**
+     * @return string
+     */
+    public static function getClassName()
+    {
+        return __CLASS__;
     }
 } 

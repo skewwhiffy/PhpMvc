@@ -6,20 +6,6 @@ use Framework\Common\IPathExtensions;
 use Framework\Common\PathExtensions;
 
 /**
- * Interface IFileReader
- * @package Framework\ViewRendering
- */
-interface IFileReader
-{
-    /**
-     * @param string $path
-     *
-     * @return string
-     */
-    function readFile($path);
-}
-
-/**
  * Class FileReader
  * @package Framework\ViewRendering
  */
