@@ -45,7 +45,7 @@ class ViewTagTest extends PHPUnit_Framework_TestCase
 
         $tag = $this->constructViewTag("$codeBefore$contents");
 
-        $this->assertEquals($codeBefore, $tag->getCodeBefore());
+        $this->assertThat($tag->getCodeBefore(), $this->equalTo($codeBefore));
     }
 
     public function testFirstOfTwoTagsExtractedCorrectly()

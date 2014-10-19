@@ -61,8 +61,7 @@ class ViewTag implements IViewTag
         {
             return $this->contents;
         }
-        $this->startIndex = strpos($this->code, Constants::openTag);
-        $tagContentsStartIndex = $this->startIndex + strlen(Constants::openTag);
+        $tagContentsStartIndex = $this->getStartIndex() + strlen(Constants::openTag);
         $tagContentsEndIndex = $this->getEndIndex();
         $contentsLength = $tagContentsEndIndex - $tagContentsStartIndex;
         $this->contents = substr($this->code, $tagContentsStartIndex, $contentsLength);
@@ -84,7 +83,7 @@ class ViewTag implements IViewTag
     {
         if (is_null($this->startIndex))
         {
-            $this->startIndex = strrpos($this->code, Constants::openTag);
+            $this->startIndex = strpos($this->code, Constants::openTag);
         }
         return $this->startIndex;
     }

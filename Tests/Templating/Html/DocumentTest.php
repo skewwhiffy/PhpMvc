@@ -109,6 +109,16 @@ class DocumentTest extends PHPUnit_Framework_TestCase
         $document->render();
     }
 
+    public function testWhenDocumentHasTemplateThenTemplateNameIsReturned()
+    {
+        $templateName = 'bob';
+        $code = $this->tagFactory->template($templateName);
+        $document = new Document($code);
+
+        $this->assertThat($document->templateName(), $this->equalTo($templateName));
+        $this->assertThat($document->templateName(), $this->equalTo($templateName));
+    }
+
     public function testWhenDocumentHasTemplateThenGetContentsWorks()
     {
         $firstContent = '
