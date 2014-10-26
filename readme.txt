@@ -1,5 +1,7 @@
 Templating for views
 
+$model is a special variable used in views, and is passed in by the controller or another view.
+
 ViewTags come in different flavours.
 
 <@ template = BLAH_TEMPLATE @>
