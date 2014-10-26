@@ -1,3 +1,5 @@
+Templating for views
+
 ViewTags come in different flavours.
 
 <@ template = BLAH_TEMPLATE @>
