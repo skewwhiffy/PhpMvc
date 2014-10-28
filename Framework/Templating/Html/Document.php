@@ -24,11 +24,14 @@ class Document
     /** @var array */
     private $content;
 
-    /** @var ITagExtractor */
-    private $tagExtractor;
-
     /** @var string */
     private $templateName;
+
+    /** @var string */
+    private $modelName;
+
+    /** @var ITagExtractor */
+    private $tagExtractor;
 
     /**
      * @param string        $code
@@ -42,6 +45,7 @@ class Document
         }
         $this->tagExtractor = $tagExtractor;
         $this->code = $code;
+        $this->modelName = 'model';
     }
 
     /**
@@ -86,7 +90,6 @@ class Document
     /**
      * @throws UnrecognizedElementTypeException
      * @throws UnrecognizedTagTypeException
-     * @internal param $model
      *
      * @returns string
      */
@@ -146,7 +149,8 @@ class Document
         return $this->templateName;
     }
 
-    private function populateTemplateName(){
+    private function populateTemplateName()
+    {
 
         foreach ($this->getElements() as $element)
         {
@@ -185,11 +189,16 @@ class Document
                 /** @var TagElement $tagElement */
                 $tagElement = $element;
                 $tag = $tagElement->getTag();
-                if ($insideContent && strcasecmp($tag->getKey(), 'endcontent') === 0)
+                $tagKey = $tag->getKey();
+                if ($insideContent && strcasecmp($tagKey, 'endcontent') === 0)
                 {
                     $this->content[$key] = $content;
                     $insideContent = false;
                     $content = '';
+                }
+
+                if ($insideContent && empty($tagKey)){
+                    $content .= '<?php echo ' . $tag->getValue() . ';?>';
                 }
                 if (strcasecmp($tag->getKey(), 'content') !== 0)
                 {
@@ -213,6 +222,27 @@ class Document
     }
 
     /**
+     * @return string
+     */
+    public function getTemplateModelExpression()
+    {
+        foreach ($this->elements as $element)
+        {
+            if ($element instanceof TagElement)
+            {
+                /** @var TagElement */
+                $tagElement = $element;
+                $tag = $tagElement->getTag();
+                if (strcasecmp($tag->getKey(), 'templateModel') === 0)
+                {
+                    return $tag->getValue();
+                }
+            }
+        }
+        return '$' . $this->getModelName();
+    }
+
+    /**
      * @return bool
      */
     public function isTemplate()
@@ -232,5 +262,29 @@ class Document
             }
         }
         return false;
+    }
+
+    /**
+     * @param $newModelName
+     */
+    public function changeModelVariable($newModelName)
+    {
+        $this->elements = null;
+        $this->hasTemplate = null;
+        $this->content = null;
+        $this->templateName = null;
+        $this->code = str_replace(
+            '$' . $this->getModelName(),
+            '$' . $newModelName,
+            $this->code);
+        $this->modelName = $newModelName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getModelName()
+    {
+        return $this->modelName;
     }
 }

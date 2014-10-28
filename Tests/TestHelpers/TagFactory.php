@@ -37,6 +37,15 @@ class TagFactory
     }
 
     /**
+     * @param $expression
+     *
+     * @return string
+     */
+    public function templateModel($expression){
+        return $this->inTags("templateModel = $expression");
+    }
+
+    /**
      * @param $name
      *
      * @return string

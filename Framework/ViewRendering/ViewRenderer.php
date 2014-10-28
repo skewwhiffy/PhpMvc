@@ -34,17 +34,25 @@ class ViewRenderer
      */
     public function render($viewName, $model = null)
     {
+        $modelCount = 0;
+        $this->phpRenderer->addVariable('model', $model);
         $code = $this->viewFileReader->readFile($viewName);
         $document = new Document($code);
         while ($document->hasTemplate())
         {
+            $newModelName = "model$modelCount";
+            $modelCount++;
             $templateCode = $this->viewFileReader->readFile($document->templateName());
             $templateDocument = new Document($templateCode);
+            $templateDocument->changeModelVariable($newModelName);
+            $templateModelExpression = $document->getTemplateModelExpression();
+            $setNewModelValueCode = '$newModelValue = ' . $templateModelExpression . ';';
+            eval($setNewModelValueCode);
+            $this->phpRenderer->addVariable($newModelName, $newModelValue);
             $templateDocument->addContent($document);
             $document = $templateDocument;
         }
         $phpCode = $document->render();
-        $this->phpRenderer->addVariable('model', $model);
         return $this->phpRenderer->renderToHtml($phpCode);
     }
 }

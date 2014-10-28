@@ -78,11 +78,11 @@ class ViewRendererTest extends PHPUnit_Framework_TestCase
     public function testTemplaterWorks()
     {
         $viewName = 'view';
-        $code = $this->tags->template('templateView')
+        $templateViewName = 'templateView';
+        $code = $this->tags->template($templateViewName)
             . $this->tags->content('contentMarker')
             . 'This is the content'
             . $this->tags->endContent();
-        $templateViewName = 'templateView';
         $templateCode = 'This is before the container'
             . $this->tags->container('contentMarker')
             . 'This is after the container';
@@ -96,6 +96,31 @@ class ViewRendererTest extends PHPUnit_Framework_TestCase
             'This is before the container'
             . 'This is the content'
             . 'This is after the container'));
+    }
+
+    public function testTemplaterWorksWithModels()
+    {
+        $viewName = 'view';
+        $templateViewName = 'templateView';
+        $code = $this->tags->template($templateViewName)
+            . $this->tags->templateModel('$model + 1')
+            . $this->tags->content('contentMarker')
+            . $this->tags->expression('$model')
+            . ' is the value of the model in the view'
+            . $this->tags->endContent();
+        $templateCode = $this->tags->expression('$model')
+            . ' is the value of the model in the template'
+            . $this->tags->container('contentMarker');
+        $this->addView($viewName, $code);
+        $this->addView($templateViewName, $templateCode);
+        $renderer = $this->getRenderer();
+
+        $result = $renderer->render($viewName, 50);
+
+        $this->assertThat($result, $this->equalTo(
+            '51 is the value of the model in the template'
+            .'50 is the value of the model in the view'
+        ));
     }
 
     /**

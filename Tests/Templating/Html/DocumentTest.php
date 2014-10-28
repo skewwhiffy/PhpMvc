@@ -189,6 +189,17 @@ Second content
         $this->assertThat($document->isTemplate(), $this->isTrue());
     }
 
+    public function testChangeModelVariableNameWorks()
+    {
+        $code = '<@=$model->hello()@>';
+        $document = new Document($code);
+
+        $document->changeModelVariable('newModel');
+        $result = $document->render();
+
+        $this->assertThat($result, $this->equalTo('<?php echo $newModel->hello();?>'));
+    }
+
     /**
      * @param $element
      *
