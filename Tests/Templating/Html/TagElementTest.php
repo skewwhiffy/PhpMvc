@@ -9,14 +9,11 @@ use Framework\Templating\Tags\ViewTag;
  * Class TagElementTest
  * @package Framework\Tests\Templating\Html;
  */
-class TagElementTest extends PHPUnit_Framework_TestCase {
-
-    private $openTag = Constants::openTag;
-
-    private $closeTag = Constants::closeTag;
-
-    public function testPersistsTag() {
-        $tag = new ViewTag("$this->openTag code $this->closeTag");
+class TagElementTest extends PHPUnit_Framework_TestCase
+{
+    public function testPersistsTag()
+    {
+        $tag = new ViewTag(Constants::OPEN_TAG . ' code ' . Constants::CLOSE_TAG);
         $element = new TagElement($tag);
         $this->assertSame($tag, $element->getTag());
     }

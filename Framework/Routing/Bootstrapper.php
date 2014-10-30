@@ -5,4 +5,8 @@ use Framework\Routing\Request;
 
 $request = new Request();
 
-echo $request->getUri();
+echo "REQUEST: \n";
+var_dump($_REQUEST);
+
+echo "SERVER: \n";
+var_dump($_SERVER);

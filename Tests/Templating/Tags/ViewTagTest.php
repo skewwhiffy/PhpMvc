@@ -13,8 +13,8 @@ use Framework\Exceptions\TagWithNoContentException;
  */
 class ViewTagTest extends PHPUnit_Framework_TestCase
 {
-    private $openTag = Constants::openTag;
-    private $closeTag = Constants::closeTag;
+    private $openTag = Constants::OPEN_TAG;
+    private $closeTag = Constants::CLOSE_TAG;
     /** @var TagFactory */
     private $tags;
 

@@ -1,0 +1,15 @@
+{
+    "name": "PHP MVC Framework",
+    "description": "Lightweight PHP framework",
+    "minimum-stability": "stable",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Kenny Hung",
+            "email": "kennyhung@live.co.uk"
+        }
+    ],
+    "require": {
+        "phpmd/phpmd": "2.1.3"
+    }
+}

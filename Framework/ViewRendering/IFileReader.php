@@ -2,8 +2,6 @@
 
 namespace Framework\ViewRendering;
 
-use Framework\Common\IPathExtensions;
-
 /**
  * Interface IFileReader
  * @package Framework\ViewRendering

@@ -7,6 +7,6 @@ namespace Framework\Constants;
  * @package Framework\Constants
  */
 abstract class Constants{
-    const openTag = '<@';
-    const closeTag = '@>';
+    const OPEN_TAG = '<@';
+    const CLOSE_TAG = '@>';
 }

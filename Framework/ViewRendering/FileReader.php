@@ -2,7 +2,6 @@
 
 namespace Framework\ViewRendering;
 
-use Framework\Common\IPathExtensions;
 use Framework\Common\PathExtensions;
 
 /**
@@ -14,7 +13,7 @@ class FileReader implements IFileReader
     /** @var string */
     private $directory;
 
-    /** @var IPathExtensions */
+    /** @var PathExtensions */
     private $extensions;
 
     /**

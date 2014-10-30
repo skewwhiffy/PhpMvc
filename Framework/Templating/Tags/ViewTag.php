@@ -61,7 +61,7 @@ class ViewTag implements IViewTag
         {
             return $this->contents;
         }
-        $tagContentsStartIndex = $this->getStartIndex() + strlen(Constants::openTag);
+        $tagContentsStartIndex = $this->getStartIndex() + strlen(Constants::OPEN_TAG);
         $tagContentsEndIndex = $this->getEndIndex();
         $contentsLength = $tagContentsEndIndex - $tagContentsStartIndex;
         $this->contents = substr($this->code, $tagContentsStartIndex, $contentsLength);
@@ -73,7 +73,7 @@ class ViewTag implements IViewTag
      */
     public function getTagCode()
     {
-        return Constants::openTag . $this->getContents() . Constants::closeTag;
+        return Constants::OPEN_TAG . $this->getContents() . Constants::CLOSE_TAG;
     }
 
     /**
@@ -83,19 +83,21 @@ class ViewTag implements IViewTag
     {
         if (is_null($this->startIndex))
         {
-            $this->startIndex = strpos($this->code, Constants::openTag);
+            $this->startIndex = strpos($this->code, Constants::OPEN_TAG);
         }
         return $this->startIndex;
     }
 
     /**
      * @return int
+     *
+     * @throws OpenTagNotClosedException
      */
     private function getEndIndex()
     {
         if (is_null($this->endIndex))
         {
-            $this->endIndex = strpos($this->code, Constants::closeTag, $this->getStartIndex());
+            $this->endIndex = strpos($this->code, Constants::CLOSE_TAG, $this->getStartIndex());
             if ($this->endIndex === false)
             {
                 throw new OpenTagNotClosedException($this->code);
@@ -153,7 +155,7 @@ class ViewTag implements IViewTag
     {
         if (is_null($this->remainderIndex))
         {
-            $this->remainderIndex = $this->getEndIndex() + strlen(Constants::closeTag);
+            $this->remainderIndex = $this->getEndIndex() + strlen(Constants::CLOSE_TAG);
         }
         return $this->remainderIndex;
     }

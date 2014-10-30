@@ -19,7 +19,7 @@ class TagExtractor implements ITagExtractor
     {
         $tags = [];
         $remainingCode = $code;
-        while (strpos($remainingCode, Constants::openTag) !== false)
+        while (strpos($remainingCode, Constants::OPEN_TAG) !== false)
         {
             $newTag = new ViewTag($remainingCode);
             $tags[] = $newTag;
@@ -29,6 +29,8 @@ class TagExtractor implements ITagExtractor
     }
 
     /**
+     * @param $code
+     *
      * @return IDocumentElement[]
      */
     public function getElements($code)

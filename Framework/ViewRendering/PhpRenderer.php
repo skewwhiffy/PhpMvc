@@ -33,7 +33,7 @@ class PhpRenderer
 
     /**
      * @param string $name
-     * @param object $value
+     * @param string $value
      */
     public function addVariable($name, $value)
     {

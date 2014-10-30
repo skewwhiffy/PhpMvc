@@ -119,11 +119,26 @@ class DocumentTest extends PHPUnit_Framework_TestCase
         $this->assertThat($document->templateName(), $this->equalTo($templateName));
     }
 
+    public function testWhenUsingUnknownTagThenGetContentsThrows()
+    {
+        $this->setExpectedException(UnrecognizedTagTypeException::getClassName());
+        $code = $this->tagFactory->template('theTemplate')
+            . $this->tagFactory->content('')
+            . $this->tagFactory->inTags('poo = poo')
+            . $this->tagFactory->endContent();
+        $document = new Document($code);
+
+        $document->getContent();
+    }
+
     public function testWhenDocumentHasTemplateThenGetContentsWorks()
     {
         $firstContent = '
 First content
-';
+'.$this->tagFactory->expression('\'hello\'');
+        $firstContentWithEcho = '
+First content
+<?php echo \'hello\';?>';
         $secondContent = '
 Second content
 ';
@@ -140,7 +155,7 @@ Second content
 
         $this->assertNotNull($result);
         $this->assertThat(array_key_exists('first', $result), $this->isTrue());
-        $this->assertThat($result['first'], $this->equalTo($firstContent));
+        $this->assertThat($result['first'], $this->equalTo($firstContentWithEcho));
         $this->assertThat(array_key_exists('second', $result), $this->isTrue());
         $this->assertThat($result['second'], $this->equalTo($secondContent));
         $this->assertThat($result, $this->equalTo($document->getContent()));

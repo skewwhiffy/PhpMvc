@@ -70,6 +70,6 @@ class TagFactory
      */
     public function inTags($code)
     {
-        return Constants::openTag . $code . Constants::closeTag;
+        return Constants::OPEN_TAG . $code . Constants::CLOSE_TAG;
     }
 }

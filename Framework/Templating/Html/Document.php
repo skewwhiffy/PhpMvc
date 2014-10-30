@@ -181,7 +181,7 @@ class Document
         $this->content = [];
         $insideContent = false;
         $content = '';
-        $key = '';
+        $contentKey = '';
         foreach ($this->getElements() as $element)
         {
             if ($element instanceof TagElement)
@@ -190,21 +190,29 @@ class Document
                 $tagElement = $element;
                 $tag = $tagElement->getTag();
                 $tagKey = $tag->getKey();
-                if ($insideContent && strcasecmp($tagKey, 'endcontent') === 0)
-                {
-                    $this->content[$key] = $content;
-                    $insideContent = false;
-                    $content = '';
-                }
 
-                if ($insideContent && empty($tagKey)){
-                    $content .= '<?php echo ' . $tag->getValue() . ';?>';
+                if ($insideContent)
+                {
+                    if (strcasecmp($tagKey, 'endcontent') === 0)
+                    {
+                        $this->content[$contentKey] = $content;
+                        $insideContent = false;
+                        $content = '';
+                    }
+                    elseif (empty($tagKey))
+                    {
+                        $content .= '<?php echo ' . $tag->getValue() . ';?>';
+                    }
+                    else
+                    {
+                        throw new UnrecognizedTagTypeException($tag);
+                    }
                 }
                 if (strcasecmp($tag->getKey(), 'content') !== 0)
                 {
                     continue;
                 }
-                $key = $tag->getValue();
+                $contentKey = $tag->getValue();
                 $insideContent = true;
                 $content = '';
             }

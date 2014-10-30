@@ -9,19 +9,39 @@ namespace Framework\Routing;
 class Request
 {
     private $server;
+    private $request;
 
     /**
+     * @param array $request
      * @param array $server
      */
-    public function __construct($server = null)
+    public function __construct($request = null, $server = null)
     {
-        if ($server === null){
+        if ($request === null)
+        {
+            $request = $_REQUEST;
+        }
+        if ($server === null)
+        {
             $server = $_SERVER;
         }
+        $this->request = $request;
         $this->server = $server;
     }
 
-    public function getUri(){
-        return $this->server['REQUEST_URI'];
+    /**
+     * @return array|null
+     */
+    public function getRequest()
+    {
+        return $this->request;
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getServer()
+    {
+        return $this->server;
     }
 }
