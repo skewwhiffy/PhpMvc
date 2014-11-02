@@ -1,10 +1,10 @@
-<?php
-namespace Framework\Exceptions;
+<?php namespace Framework\Exceptions;
 
 use Exception;
 
 /**
  * Class TagWithNoContentException
+ * @package Framework\Exceptions
  */
 class OpenTagNotClosedException extends Exception
 {

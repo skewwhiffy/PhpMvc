@@ -1,5 +1,5 @@
 <?php
-require_once '..\Includes.php';
+require_once 'Includes.php';
 
 use Framework\Routing\Request;
 

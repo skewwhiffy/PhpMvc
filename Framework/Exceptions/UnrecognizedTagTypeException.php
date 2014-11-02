@@ -1,6 +1,4 @@
-<?php
-namespace Framework\Exceptions;
-
+<?php namespace Framework\Exceptions;
 use Exception;
 use Framework\Templating\Tags\IViewTag;
 

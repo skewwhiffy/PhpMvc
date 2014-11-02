@@ -1,6 +1,4 @@
-<?php
-
-namespace Framework\Common;
+<?php namespace Framework\Common;
 
 /**
  * Class PathExtensions

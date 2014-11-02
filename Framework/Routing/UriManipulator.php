@@ -1,6 +1,4 @@
-<?php
-
-namespace Framework\Routing;
+<?php namespace Framework\Routing;
 
 /**
  * Class UriManipulator

@@ -1,6 +1,4 @@
-<?php
-
-namespace Framework\Constants;
+<?php namespace Framework\Constants;
 
 /**
  * Class Constants

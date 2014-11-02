@@ -20,43 +20,104 @@ class FileReaderTest extends PHPUnit_Framework_TestCase
     /** @var string */
     private $fileName;
 
-    /** @var resource */
-    private $temporaryFile;
+    /** @var FileReader */
+    private $reader;
+
+    /** @var string */
+    private $subdirectoryName;
+
+    /** @var string */
+    private $subdirectoryFilename;
+
+    /** @var string */
+    private $subcode;
+
+    /** @var string */
+    private $subdirectoryPartialFilename;
 
     public function setUp()
     {
-        $this->temporaryFile = tmpFile();
-        $this->temporaryFilename = stream_get_meta_data($this->temporaryFile)['uri'];
-        $this->directoryName = dirname($this->temporaryFilename);
-        $this->fileName = basename($this->temporaryFilename);
+        $this->directoryName = tempnam(sys_get_temp_dir(), '');
+        if (file_exists($this->directoryName))
+        {
+            unlink($this->directoryName);
+        }
+        mkdir($this->directoryName);
+
+        $this->temporaryFilename = $this->directoryName . '\temporary.php';
         $this->code = 'Hello world, this is a text file, oh yes';
-        fwrite($this->temporaryFile, $this->code);
+        file_put_contents($this->temporaryFilename, $this->code);
+        var_dump($this->directoryName);
+
+        $this->fileName = basename($this->temporaryFilename);
+        $this->reader = new FileReader($this->directoryName);
+
+        $this->subdirectoryName = $this->directoryName . '\temporary';
+        mkdir($this->subdirectoryName);
+        $this->subcode = 'Subdirectory file, oh yes';
+        $this->subdirectoryFilename = $this->subdirectoryName .'\subTemporary.php';
+        $this->subdirectoryPartialFilename = 'temporary\subTemporary.php';
+        file_put_contents($this->subdirectoryFilename, $this->subcode);
     }
 
     public function tearDown()
     {
-        $this->deleteTemporaryFile();
+        $this->deleteTemporaryFiles();
     }
 
     public function testReadsTextFile()
     {
-        $reader = new FileReader($this->directoryName);
-        $result = $reader->readFile($this->fileName);
+        $result = $this->reader->readFile($this->fileName);
 
         $this->assertThat($result, $this->equalTo($this->code));
+    }
+
+    public function testReadsDirectoryContents()
+    {
+        $files = $this->reader->getFiles();
+
+        $this->assertThat($files, $this->contains($this->fileName));
+        $this->assertThat($files, $this->contains($this->subdirectoryPartialFilename));
     }
 
     public function testReadNonExistentFileThrows()
     {
         $this->setExpectedException('Exception');
-        $this->deleteTemporaryFile();
+        $this->deleteTemporaryFiles();
 
         $reader = new FileReader($this->directoryName);
         $reader->readFile($this->fileName);
     }
 
-    private function deleteTemporaryFile()
+    private function deleteTemporaryFiles()
     {
-        $this->temporaryFile = null;
+        $this->deleteDirectory($this->directoryName);
+    }
+
+    /**
+     * @param string $dir
+     */
+    private function deleteDirectory($dir)
+    {
+        if (is_dir($dir))
+        {
+            $objects = scandir($dir);
+            foreach ($objects as $object)
+            {
+                if ($object != "." && $object != "..")
+                {
+                    if (filetype($dir . "/" . $object) == "dir")
+                    {
+                        $this->deleteDirectory($dir . "/" . $object);
+                    }
+                    else
+                    {
+                        unlink($dir . "/" . $object);
+                    }
+                }
+            }
+            reset($objects);
+            rmdir($dir);
+        }
     }
 }
