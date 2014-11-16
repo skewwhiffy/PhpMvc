@@ -14,4 +14,9 @@ interface IFileReader
      * @return string
      */
     function readFile($path);
+
+    /**
+     * @return string[]
+     */
+    function getFiles();
 }

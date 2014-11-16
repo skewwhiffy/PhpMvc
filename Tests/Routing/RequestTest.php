@@ -1,6 +1,7 @@
 <?php
 use Framework\Exceptions\InvalidRequestMethodException;
 use Framework\Routing\Request;
+use Framework\Routing\RequestMethod;
 
 require_once __DIR__ . '/../Includes.php';
 

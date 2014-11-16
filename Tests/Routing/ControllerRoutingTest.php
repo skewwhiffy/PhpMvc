@@ -5,12 +5,43 @@ use Framework\Routing\Request;
 use Framework\ViewRendering\FileReader;
 
 require_once __DIR__ . '/../Includes.php';
+require_once __DIR__ . '/TestControllers/ControllerWithActionController.php';
+require_once __DIR__ . '/TestControllers/ControllerWithoutActionController.php';
 
 /**
  * Class ControllerRoutingTest
  */
 class ControllerRoutingTest extends PHPUnit_Framework_TestCase
 {
+    const controller = 'controller';
+    const action = 'action';
+
+    /**
+     * @return PHPUnit_Framework_MockObject_MockObject
+     */
+    private function getControllerFileReaderMock()
+    {
+        return $this->getMock('Framework\ViewRendering\IFileReader');
+    }
+
+    /**
+     * @param string $url
+     *
+     * @return PHPUnit_Framework_MockObject_MockObject
+     */
+    private function getRequestMock($url = null)
+    {
+        if ($url === null)
+        {
+            $url = self::controller . '/' . self::action;
+        }
+        $requestMock = $this->getMock('Framework\Routing\IRequest');
+        $requestMock->expects($this->any())
+            ->method('getUri')
+            ->willReturn($url);
+        return $requestMock;
+    }
+
     public function testConstructWorksWithNoArguments()
     {
         $routing = new ControllerRouting(new FileReader(__DIR__));
@@ -19,7 +50,48 @@ class ControllerRoutingTest extends PHPUnit_Framework_TestCase
         $this->assertThat($request, $this->isInstanceOf(get_class(new Request())));
     }
 
-    public function testHasMatchingControllerReturnsFalseIfNoMatchingControllers(){
+    public function testExtractsControllerNameAndActionCorrectly()
+    {
+        $controllers = $this->getControllerFileReaderMock();
+        $request = $this->getRequestMock();
+        $routing = new ControllerRouting($controllers, $request);
 
+        $this->assertThat($routing->controllerName(), $this->equalTo(self::controller));
+        $this->assertThat($routing->actionName(), $this->equalTo(self::action));
+    }
+
+    public function testShouldInvokeReturnsFalseWhenControllerDoesNotExist()
+    {
+        $controllers = $this->getControllerFileReaderMock();
+        $controllers->expects($this->any())
+            ->method('getFiles')
+            ->willReturn([]);
+        $routing = new ControllerRouting($controllers, $this->getRequestMock());
+
+        $this->assertThat($routing->shouldInvoke(), $this->isFalse());
+    }
+
+    public function testShouldInvokeReturnsFalseWhenActionDoesNotExist()
+    {
+        $request = $this->getRequestMock('controllerWithoutAction/action');
+        $controllers = $this->getControllerFileReaderMock();
+        $controllers->expects($this->any())
+            ->method('getFiles')
+            ->willReturn(['ControllerWithoutActionController.php']);
+        $routing = new ControllerRouting($controllers, $request);
+
+        $this->assertThat($routing->shouldInvoke(), $this->isFalse());
+    }
+
+    public function testShouldInvokeReturnsTrueWhenActionExists()
+    {
+        $request = $this->getRequestMock('controllerWithAction/action');
+        $controllers = $this->getControllerFileReaderMock();
+        $controllers->expects($this->any())
+            ->method('getFiles')
+            ->willReturn(['ControllerWithActionController.php']);
+        $routing = new ControllerRouting($controllers, $request);
+
+        $this->assertThat($routing->shouldInvoke(), $this->isTrue());
     }
 }

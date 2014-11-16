@@ -1,11 +1,13 @@
 <?php
 // Constants
 require_once __DIR__ . '/Constants/Constants.php';
+
 // Interfaces
 require_once __DIR__ . '/Templating/Html/IDocumentElement.php';
 require_once __DIR__ . '/Templating/Tags/IViewTag.php';
 require_once __DIR__ . '/ViewRendering/IFileReader.php';
 require_once __DIR__ . '/Templating/Tags/ITagExtractor.php';
+require_once __DIR__ . '/Routing/IRequest.php';
 
 // Exceptions
 require_once __DIR__ . '/Exceptions/TagWithNoContentException.php';
@@ -29,7 +31,6 @@ require_once __DIR__ . '/ViewRendering/ViewRenderer.php';
 require_once __DIR__ . '/Common/PathExtensions.php';
 
 require_once __DIR__ . '/Routing/ControllerRouting.php';
-require_once __DIR__ . '/Routing/IRequest.php';
 require_once __DIR__ . '/Routing/Request.php';
 require_once __DIR__ . '/Routing/RequestMethod.php';
 require_once __DIR__ . '/Routing/UriManipulator.php';

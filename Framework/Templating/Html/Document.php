@@ -170,7 +170,8 @@ class Document
     }
 
     /**
-     * @return array
+     * @throws UnrecognizedTagTypeException
+     * @return string[]
      */
     public function getContent()
     {

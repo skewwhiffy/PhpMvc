@@ -144,33 +144,3 @@ class ViewRendererTest extends PHPUnit_Framework_TestCase
         $this->views[] = [$viewName, $code];
     }
 }
-
-/**
- * Class MockFileReader
- */
-
-/** @noinspection PhpMultipleClassesDeclarationsInOneFile */
-class MockFileReader implements IFileReader
-{
-    /** @var array */
-    private $views = [];
-
-    /**
-     * @param string $viewName
-     * @param string $code
-     */
-    public function addView($viewName, $code)
-    {
-        $this->views[$viewName] = $code;
-    }
-
-    /**
-     * @param string $path
-     *
-     * @return string
-     */
-    function readFile($path)
-    {
-        return $this->views[$path];
-    }
-}

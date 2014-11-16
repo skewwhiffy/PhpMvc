@@ -44,7 +44,7 @@ class FileReader implements IFileReader
     }
 
     /**
-     * @return array
+     * @return string[]
      */
     public function getFiles()
     {
@@ -54,7 +54,7 @@ class FileReader implements IFileReader
     /**
      * @param $path
      *
-     * @return array
+     * @return string[]
      */
     private function getFilesInternal($path = '')
     {
