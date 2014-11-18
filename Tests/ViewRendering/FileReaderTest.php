@@ -89,6 +89,15 @@ class FileReaderTest extends PHPUnit_Framework_TestCase
         $reader->readFile($this->fileName);
     }
 
+    public function testIncludeWorks(){
+        $reader = new FileReader(__DIR__ . '/FileReaderTestFiles');
+
+        $reader->includeFile('FileToReadClass.php');
+
+        $readClass = new FileToReadClass();
+        $this->assertThat($readClass->testMethod(), $this->equalTo('hello world'));
+    }
+
     private function deleteTemporaryFiles()
     {
         $this->deleteDirectory($this->directoryName);

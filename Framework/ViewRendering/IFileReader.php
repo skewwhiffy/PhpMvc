@@ -19,4 +19,9 @@ interface IFileReader
      * @return string[]
      */
     function getFiles();
+
+    /**
+     * @param $path
+     */
+    function includeFile($path);
 }

@@ -5,7 +5,11 @@
  */
 class ControllerWithActionController
 {
+    /**
+     * @return string
+     */
     public function action()
     {
+        return 'action, man';
     }
 }

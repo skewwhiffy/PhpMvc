@@ -34,5 +34,6 @@ require_once __DIR__ . '/Routing/ControllerRouting.php';
 require_once __DIR__ . '/Routing/Request.php';
 require_once __DIR__ . '/Routing/RequestMethod.php';
 require_once __DIR__ . '/Routing/UriManipulator.php';
+require_once __DIR__ . '/Routing/MethodInvoker.php';
 
 

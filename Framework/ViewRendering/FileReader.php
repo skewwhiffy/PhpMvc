@@ -93,4 +93,12 @@ class FileReader implements IFileReader
 
         return $files;
     }
+
+    /**
+     * @param $path
+     */
+    function includeFile($path)
+    {
+        require_once $this->extensions->joinPaths($this->directory, $path);
+    }
 }
