@@ -14,7 +14,7 @@ class MethodInvokerTest extends PHPUnit_Framework_TestCase
      */
     private function getTestControllersFileReader()
     {
-        return new FileReader('TestControllers');
+        return new FileReader(__DIR__ . '/TestControllers');
     }
 
     /**

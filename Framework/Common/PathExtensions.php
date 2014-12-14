@@ -8,7 +8,6 @@ class PathExtensions
 {
     /**
      * @return string
-     * @internal param string $path,...
      */
     public function joinPaths()
     {

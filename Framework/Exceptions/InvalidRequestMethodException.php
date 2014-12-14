@@ -6,11 +6,13 @@ use Exception;
  * Class InvalidRequestMethod
  * @package Framework\Exceptions
  */
-class InvalidRequestMethodException extends Exception{
+class InvalidRequestMethodException extends Exception
+{
     /**
      * @param string $method
      */
-    public function __construct($method){
+    public function __construct($method)
+    {
         parent::__construct("Unrecognized method: $method");
     }
 

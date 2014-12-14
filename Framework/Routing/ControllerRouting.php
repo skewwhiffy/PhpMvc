@@ -1,8 +1,10 @@
 <?php namespace Framework\Routing;
 
 use Framework\Common\PathExtensions;
+use Framework\Exceptions\ControllerRoutingException;
 use Framework\ViewRendering\IFileReader;
 use ReflectionClass;
+use ReflectionException;
 
 /**
  * Class ControllerRouting
@@ -15,7 +17,7 @@ class ControllerRouting
     private $controllers;
 
     /**
-     * @param IRequest    $request
+     * @param IRequest $request
      * @param IFileReader $controllers
      */
     public function __construct(
@@ -50,6 +52,14 @@ class ControllerRouting
     /**
      * @return string
      */
+    public function controllerClassName()
+    {
+        return $this->controllerName() . 'Controller';
+    }
+
+    /**
+     * @return string
+     */
     public function actionName()
     {
         return $this->paths->splitPath($this->request->getUri())[1];
@@ -57,11 +67,12 @@ class ControllerRouting
 
     /**
      * @return bool
+     * @throws ControllerRoutingException
      */
     public function shouldInvoke()
     {
-        $controllerClassname = $this->controllerName() . 'Controller';
-        $controllerFilename = $this->cleanName("$controllerClassname.php");
+        $controllerClassName = $this->controllerName() . 'Controller';
+        $controllerFilename = $this->cleanName("$controllerClassName.php");
         $controllerFound = false;
         foreach ($this->controllers->getFiles() as $filename)
         {
@@ -75,7 +86,15 @@ class ControllerRouting
         {
             return false;
         }
-        $class = new ReflectionClass($controllerClassname);
+        $this->controllers->includeFile($controllerFilename);
+        try
+        {
+            $class = new ReflectionClass($controllerClassName);
+        }
+        catch (ReflectionException $ex)
+        {
+            throw new ControllerRoutingException($controllerClassName);
+        }
         $methods = $class->getMethods();
         $actionName = $this->cleanName($this->actionName());
         foreach ($methods as $method)
