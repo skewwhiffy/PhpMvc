@@ -1,4 +1,6 @@
 <?php
+use Framework\ViewRendering\FileReader;
+use Framework\ViewRendering\ViewRenderer;
 
 /**
  * Class HomeController
@@ -6,8 +8,14 @@
  */
 class HomeController
 {
+    /**
+     *
+     */
     public function index()
     {
+        $views = new FileReader(__DIR__ . '\..\Views\Home');
+        $renderer = new ViewRenderer($views);
+        $renderer->render('index');
         echo 'Hello from Home/index method<br/>';
     }
 }
