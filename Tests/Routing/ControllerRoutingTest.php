@@ -9,6 +9,7 @@ use Framework\ViewRendering\IFileReader;
 require_once __DIR__ . '/../Includes.php';
 require_once __DIR__ . '/TestControllers/ControllerWithActionController.php';
 require_once __DIR__ . '/TestControllers/ControllerWithoutActionController.php';
+require_once __DIR__ . '/TestControllers/ControllerWithCatchAllMethodController.php';
 
 /**
  * Class ControllerRoutingTest
@@ -99,7 +100,8 @@ class ControllerRoutingTest extends PHPUnit_Framework_TestCase
         $this->assertThat($routing->shouldInvoke(), $this->isTrue());
     }
 
-    public function testShouldInvokeIsCaseInsensitive(){
+    public function testShouldInvokeIsCaseInsensitive()
+    {
         $request = $this->getRequestMock('CONTROLLERWITHACTION/ACTION');
         $controllers = $this->getControllerFileReaderMock();
         $controllers->expects($this->any())
@@ -108,6 +110,16 @@ class ControllerRoutingTest extends PHPUnit_Framework_TestCase
         $routing = new ControllerRouting($controllers, $request);
 
         $this->assertThat($routing->shouldInvoke(), $this->isTrue());
+    }
 
+    public function testShouldInvokeIfControllerHasCatchAllMethod(){
+        $request = $this->getRequestMock('controllerWithCatchAllMethod/blah/dee/blah');
+        $controllers = $this->getControllerFileReaderMock();
+        $controllers->expects($this->any())
+            ->method('getFiles')
+            ->willReturn(['ControllerWithCatchAllMethodController.php']);
+        $routing = new ControllerRouting($controllers, $request);
+
+        $this->assertThat($routing->shouldInvoke(), $this->isTrue());
     }
 }

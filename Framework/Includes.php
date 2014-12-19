@@ -16,6 +16,7 @@ require_once __DIR__ . '/Exceptions/UnrecognizedElementTypeException.php';
 require_once __DIR__ . '/Exceptions/UnrecognizedTagTypeException.php';
 require_once __DIR__ . '/Exceptions/InvalidRequestMethodException.php';
 require_once __DIR__ . '/Exceptions/ControllerRoutingException.php';
+require_once __DIR__ . '/Exceptions/NotImplementedException.php';
 
 // Classes
 require_once __DIR__ . '/Templating/Tags/ViewTag.php';

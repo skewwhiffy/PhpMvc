@@ -15,7 +15,6 @@ class HomeController
     {
         $views = new FileReader(__DIR__ . '\..\Views\Home');
         $renderer = new ViewRenderer($views);
-        $renderer->render('index');
-        echo 'Hello from Home/index method<br/>';
+        echo $renderer->render('index.html', 'Index page');
     }
 }

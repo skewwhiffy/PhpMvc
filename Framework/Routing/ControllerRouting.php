@@ -99,7 +99,8 @@ class ControllerRouting
         $actionName = $this->cleanName($this->actionName());
         foreach ($methods as $method)
         {
-            if ($this->cleanName($method->name) === $actionName)
+            $name = $this->cleanName($method->name);
+            if ($name === $actionName || $name = '__catchall')
             {
                 return true;
             }

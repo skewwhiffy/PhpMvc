@@ -1,6 +1,7 @@
 <?php
 use Framework\Routing\MethodInvoker;
 use Framework\ViewRendering\FileReader;
+use Framework\ViewRendering\IFileReader;
 
 require_once __DIR__ . '/../Includes.php';
 
@@ -33,6 +34,7 @@ class MethodInvokerTest extends PHPUnit_Framework_TestCase
 
     public function testGetInstanceCallsInclude()
     {
+        /** @var IFileReader|PHPUnit_Framework_MockObject_MockObject $controllers */
         $controllers = $this->getMock('Framework\ViewRendering\IFileReader');
         $controllers
             ->expects($this->once())
@@ -40,7 +42,7 @@ class MethodInvokerTest extends PHPUnit_Framework_TestCase
         $invoker = new MethodInvoker($controllers);
 
         $testController = __CLASS__;
-        $instance = $invoker->getInstance($testController, []);
+        $instance = $invoker->getInstance($testController);
         $this->assertThat($instance, $this->isInstanceOf(__CLASS__));;
     }
 
@@ -73,5 +75,20 @@ class MethodInvokerTest extends PHPUnit_Framework_TestCase
             []);
 
         $this->assertThat($result, $this->equalTo($expected));
+    }
+
+    public function testControllerWithCatchAllMethodWorks(){
+        $controllers = $this->getTestControllersFileReader();
+        $invoker = $this->getInvoker($controllers);
+        $controller = 'ControllerWithCatchAllMethodController';
+
+        /** @var ControllerWithCatchAllMethod $instance */
+        $instance = $invoker->getInstance($controller);
+        $result = $invoker->invokeMethodOnInstance($instance, 'blah', ['argument']);
+
+        $this->assertThat(count($result), $this->equalTo(2));
+        $this->assertThat($result[0], $this->equalTo('blah'));
+        $this->assertThat(count($result[1]), $this->equalTo(1));
+        $this->assertThat($result[1][0], $this->equalTo('argument'));
     }
 }

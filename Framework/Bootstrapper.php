@@ -8,11 +8,11 @@ use Framework\Routing\Request;
 use Framework\ViewRendering\FileReader;
 
 $request = new Request();
-$controllers = new FileReader(__DIR__ . '/../Content/Controllers');
+$controllers = new FileReader(__DIR__ . '/../Site/Controllers');
 $routing = new ControllerRouting($controllers, $request);
 if (!$routing->shouldInvoke())
 {
-    throw new NotImplementedException('Don\'t know what to do');
+    throw new NotImplementedException('I don\'t know what to do');
 }
 $invoker = new MethodInvoker($controllers);
 $controller = $invoker->getInstance($routing->controllerClassName(), []);

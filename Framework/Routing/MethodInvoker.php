@@ -1,5 +1,6 @@
 <?php namespace Framework\Routing;
 
+use Framework\Exceptions\InvalidRequestMethodException;
 use Framework\ViewRendering\IFileReader;
 use ReflectionClass;
 use ReflectionMethod;
@@ -29,7 +30,7 @@ class MethodInvoker
      *
      * @return mixed
      */
-    public function getInstance($className, $arguments)
+    public function getInstance($className, $arguments = [])
     {
         $this->controllers->includeFile("$className.php");
         $reflection = new ReflectionClass($className);
@@ -40,12 +41,28 @@ class MethodInvoker
      * @param $instance
      * @param $methodName
      * @param $arguments
-     *
      * @return mixed
+     * @throws InvalidRequestMethodException
      */
     public function invokeMethodOnInstance($instance, $methodName, $arguments)
     {
-        $reflection = new ReflectionMethod(get_class($instance), $methodName);
-        return $reflection->invokeArgs($instance, $arguments);
+        $reflection = new ReflectionClass(get_class($instance));
+        $catchAllMethod = null;
+        foreach ($reflection->getMethods() as $method)
+        {
+            if ($method->getName() === $methodName)
+            {
+                return $method->invokeArgs($instance, $arguments);
+            }
+            if ($method->getName() === '__catchAll')
+            {
+                $catchAllMethod = $method;
+            }
+        }
+        if ($catchAllMethod !== null)
+        {
+            return $catchAllMethod->invokeArgs($instance, [$methodName, $arguments]);
+        }
+        throw new InvalidRequestMethodException($methodName);
     }
 }
