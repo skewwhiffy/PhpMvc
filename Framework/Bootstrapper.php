@@ -5,7 +5,7 @@ use Framework\Exceptions\NotImplementedException;
 use Framework\Routing\ControllerRouting;
 use Framework\Routing\MethodInvoker;
 use Framework\Routing\Request;
-use Framework\ViewRendering\FileReader;
+use Framework\FileIo\FileReader;
 
 $request = new Request();
 $controllers = new FileReader(__DIR__ . '/../Site/Controllers');
@@ -16,4 +16,4 @@ if (!$routing->shouldInvoke())
 }
 $invoker = new MethodInvoker($controllers);
 $controller = $invoker->getInstance($routing->controllerClassName(), []);
-$invoker->invokeMethodOnInstance($controller, $routing->actionName(), []);
+$invoker->invokeMethodOnInstance($controller, $routing->actionName(), $routing->actionArgs());

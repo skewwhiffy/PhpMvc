@@ -1,6 +1,6 @@
 <?php
 
-namespace Framework\ViewRendering;
+namespace Framework\FileIo;
 
 /**
  * Interface IFileReader
@@ -21,7 +21,12 @@ interface IFileReader
     function getFiles();
 
     /**
-     * @param $path
+     * @param string $path
      */
     function includeFile($path);
+
+    /**
+     * @param string $path
+     */
+    function serveFile($path);
 }

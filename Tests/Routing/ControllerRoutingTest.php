@@ -3,8 +3,8 @@
 use Framework\Routing\ControllerRouting;
 use Framework\Routing\IRequest;
 use Framework\Routing\Request;
-use Framework\ViewRendering\FileReader;
-use Framework\ViewRendering\IFileReader;
+use Framework\FileIo\FileReader;
+use Framework\FileIo\IFileReader;
 
 require_once __DIR__ . '/../Includes.php';
 require_once __DIR__ . '/TestControllers/ControllerWithActionController.php';
@@ -25,7 +25,7 @@ class ControllerRoutingTest extends PHPUnit_Framework_TestCase
      */
     private function getControllerFileReaderMock()
     {
-        return $this->getMock('Framework\ViewRendering\IFileReader');
+        return $this->getMock('Framework\FileIo\IFileReader');
     }
 
     /**
@@ -112,7 +112,8 @@ class ControllerRoutingTest extends PHPUnit_Framework_TestCase
         $this->assertThat($routing->shouldInvoke(), $this->isTrue());
     }
 
-    public function testShouldInvokeIfControllerHasCatchAllMethod(){
+    public function testShouldInvokeIfControllerHasCatchAllMethod()
+    {
         $request = $this->getRequestMock('controllerWithCatchAllMethod/blah/dee/blah');
         $controllers = $this->getControllerFileReaderMock();
         $controllers->expects($this->any())
@@ -121,5 +122,22 @@ class ControllerRoutingTest extends PHPUnit_Framework_TestCase
         $routing = new ControllerRouting($controllers, $request);
 
         $this->assertThat($routing->shouldInvoke(), $this->isTrue());
+    }
+
+    public function testShouldExtractRemainingArgumentsCorrectly()
+    {
+        $request = $this->getRequestMock('CONTROLLERWITHACTION/ACTION/1/2/3');
+        $controllers = $this->getControllerFileReaderMock();
+        $controllers->expects($this->any())
+            ->method('getFiles')
+            ->willReturn(['ControllerWithActionController.php']);
+        $routing = new ControllerRouting($controllers, $request);
+
+        $result = $routing->actionArgs();
+
+        $this->assertThat(sizeof($result), $this->equalTo(3));
+        $this->assertThat($result[0], $this->equalTo('1'));
+        $this->assertThat($result[1], $this->equalTo('2'));
+        $this->assertThat($result[2], $this->equalTo('3'));
     }
 }

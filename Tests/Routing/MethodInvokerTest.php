@@ -1,7 +1,7 @@
 <?php
 use Framework\Routing\MethodInvoker;
-use Framework\ViewRendering\FileReader;
-use Framework\ViewRendering\IFileReader;
+use Framework\FileIo\FileReader;
+use Framework\FileIo\IFileReader;
 
 require_once __DIR__ . '/../Includes.php';
 
@@ -35,7 +35,7 @@ class MethodInvokerTest extends PHPUnit_Framework_TestCase
     public function testGetInstanceCallsInclude()
     {
         /** @var IFileReader|PHPUnit_Framework_MockObject_MockObject $controllers */
-        $controllers = $this->getMock('Framework\ViewRendering\IFileReader');
+        $controllers = $this->getMock('Framework\FileIo\IFileReader');
         $controllers
             ->expects($this->once())
             ->method('includeFile');
@@ -82,7 +82,7 @@ class MethodInvokerTest extends PHPUnit_Framework_TestCase
         $invoker = $this->getInvoker($controllers);
         $controller = 'ControllerWithCatchAllMethodController';
 
-        /** @var ControllerWithCatchAllMethod $instance */
+        /** @var ControllerWithCatchAllMethodController $instance */
         $instance = $invoker->getInstance($controller);
         $result = $invoker->invokeMethodOnInstance($instance, 'blah', ['argument']);
 

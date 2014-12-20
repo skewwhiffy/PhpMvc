@@ -8,9 +8,6 @@ use Framework\ViewRendering\ViewRenderer;
  */
 class HomeController
 {
-    /**
-     *
-     */
     public function index()
     {
         $views = new FileReader(__DIR__ . '\..\Views\Home');

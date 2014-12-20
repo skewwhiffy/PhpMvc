@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../Includes.php';
 
 use Framework\ViewRendering\ViewRenderer;
-use Framework\ViewRendering\IFileReader;
+use Framework\FileIo\IFileReader;
 
 /**
  * Class ViewRendererTest
@@ -22,7 +22,7 @@ class ViewRendererTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->fileReader = $this->getMock('Framework\ViewRendering\IFileReader');
+        $this->fileReader = $this->getMock('Framework\FileIo\IFileReader');
         $this->views = [];
         $this->tags = new TagFactory();
     }

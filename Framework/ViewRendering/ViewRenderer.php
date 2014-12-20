@@ -2,6 +2,7 @@
 namespace Framework\ViewRendering;
 
 use Framework\Templating\Html\Document;
+use Framework\FileIo\IFileReader;
 
 /**
  * Class ViewRenderer

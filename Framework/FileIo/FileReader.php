@@ -1,8 +1,10 @@
 <?php
 
-namespace Framework\ViewRendering;
+namespace Framework\FileIo;
 
 use Framework\Common\PathExtensions;
+use Framework\Exceptions\FileNotFoundException;
+use Framework\Exceptions\NotImplementedException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
@@ -18,16 +20,26 @@ class FileReader implements IFileReader
     /** @var PathExtensions */
     private $extensions;
 
+    /** @var IFileIoWrapper */
+    private $io;
+
     /**
      * @param string $directory
-     * @param null   $extensions
+     * @param IFileIoWrapper $io
+     * @param null $extensions
+     * @throws NotImplementedException
      */
-    public function __construct($directory, $extensions = null)
+    public function __construct($directory, $io = null, $extensions = null)
     {
         if (empty($extensions))
         {
             $extensions = new PathExtensions();
         }
+        if (empty($io))
+        {
+            $io = new FileIoWrapper();
+        }
+        $this->io = $io;
         $this->extensions = $extensions;
         $this->directory = $directory;
     }
@@ -95,10 +107,26 @@ class FileReader implements IFileReader
     }
 
     /**
-     * @param $path
+     * @param string $path
      */
     function includeFile($path)
     {
-        require_once $this->extensions->joinPaths($this->directory, $path);
+        $this->io->requireOnce($this->extensions->joinPaths($this->directory, $path));
+    }
+
+    /**
+     * @param string $path
+     * @throws FileNotFoundException
+     */
+    function serveFile($path)
+    {
+        $fullPath = $this->extensions->joinPaths($this->directory, $path);
+        if (!file_exists($fullPath))
+        {
+            var_dump($fullPath);
+            throw new FileNotFoundException($fullPath);
+        }
+        $this->io->header('Content-Type', 'image/png');
+        $this->io->readFile($fullPath);
     }
 }

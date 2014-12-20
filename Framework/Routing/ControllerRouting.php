@@ -2,7 +2,7 @@
 
 use Framework\Common\PathExtensions;
 use Framework\Exceptions\ControllerRoutingException;
-use Framework\ViewRendering\IFileReader;
+use Framework\FileIo\IFileReader;
 use ReflectionClass;
 use ReflectionException;
 
@@ -63,6 +63,15 @@ class ControllerRouting
     public function actionName()
     {
         return $this->paths->splitPath($this->request->getUri())[1];
+    }
+
+    /**
+     * @return string[]
+     */
+    public function actionArgs()
+    {
+        $uriSections = $this->paths->splitPath($this->request->getUri());
+        return array_slice($uriSections, 2);
     }
 
     /**

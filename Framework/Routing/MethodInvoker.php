@@ -1,9 +1,8 @@
 <?php namespace Framework\Routing;
 
 use Framework\Exceptions\InvalidRequestMethodException;
-use Framework\ViewRendering\IFileReader;
+use Framework\FileIo\IFileReader;
 use ReflectionClass;
-use ReflectionMethod;
 
 /**
  * Class MethodInvoker

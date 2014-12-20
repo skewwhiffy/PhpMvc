@@ -1,7 +1,8 @@
 <?php
 require_once __DIR__ . '/../Includes.php';
 
-use Framework\ViewRendering\FileReader;
+use Framework\FileIo\FileReader;
+use Framework\FileIo\IFileIoWrapper;
 
 /**
  * Class FileReaderTest
@@ -35,6 +36,9 @@ class FileReaderTest extends PHPUnit_Framework_TestCase
     /** @var string */
     private $subdirectoryPartialFilename;
 
+    /** @var IFileIoWrapper|PHPUnit_Framework_MockObject_MockObject */
+    private $io;
+
     public function setUp()
     {
         $this->directoryName = tempnam(sys_get_temp_dir(), '');
@@ -50,14 +54,17 @@ class FileReaderTest extends PHPUnit_Framework_TestCase
         var_dump($this->directoryName);
 
         $this->fileName = basename($this->temporaryFilename);
-        $this->reader = new FileReader($this->directoryName);
+        $this->io = $this->getMock('Framework\FileIo\IFileIoWrapper');
+
+        $this->reader = new FileReader($this->directoryName, $this->io);;
 
         $this->subdirectoryName = $this->directoryName . '\temporary';
         mkdir($this->subdirectoryName);
         $this->subcode = 'Subdirectory file, oh yes';
-        $this->subdirectoryFilename = $this->subdirectoryName .'\subTemporary.php';
+        $this->subdirectoryFilename = $this->subdirectoryName . '\subTemporary.php';
         $this->subdirectoryPartialFilename = 'temporary\subTemporary.php';
         file_put_contents($this->subdirectoryFilename, $this->subcode);
+
     }
 
     public function tearDown()
@@ -85,17 +92,43 @@ class FileReaderTest extends PHPUnit_Framework_TestCase
         $this->setExpectedException('Exception');
         $this->deleteTemporaryFiles();
 
-        $reader = new FileReader($this->directoryName);
-        $reader->readFile($this->fileName);
+        $this->reader->readFile($this->fileName);
     }
 
-    public function testIncludeWorks(){
-        $reader = new FileReader(__DIR__ . '/FileReaderTestFiles');
+    public function testIncludeWorks()
+    {
+        $reader = $this->getTestFilesReader();
 
         $reader->includeFile('FileToReadClass.php');
 
         $readClass = new FileToReadClass();
         $this->assertThat($readClass->testMethod(), $this->equalTo('hello world'));
+    }
+
+    public function testServeFileWorks()
+    {
+        $reader = $this->getTestFilesReaderWithStubbedIo();
+        $this->io->expects($this->once())
+            ->method('header');
+        $this->io->expects($this->once())
+            ->method('readFile');
+
+        $reader->serveFile('FileToReadClass.php');
+    }
+
+    /**
+     * @return FileReader
+     */
+    private function getTestFilesReader()
+    {
+        return new FileReader(__DIR__ . '/FileReaderTestFiles');
+    }
+
+    /**
+     * @return FileReader
+     */
+    private function getTestFilesReaderWithStubbedIo(){
+        return new FileReader(__DIR__ . '/FileReaderTestFiles', $this->io);
     }
 
     private function deleteTemporaryFiles()
