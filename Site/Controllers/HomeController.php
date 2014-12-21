@@ -1,12 +1,13 @@
 <?php
-use Framework\ViewRendering\FileReader;
+use Framework\BaseClasses\HtmlController;
+use Framework\FileIo\FileReader;
 use Framework\ViewRendering\ViewRenderer;
 
 /**
  * Class HomeController
  * @package Content\Controllers
  */
-class HomeController
+class HomeController extends HtmlController
 {
     public function index()
     {
