@@ -25,6 +25,8 @@ require_once __DIR__ . '/Exceptions/FileTypeNotRecognizedException.php';
 require_once __DIR__ . '/Common/PathExtensions.php';
 require_once __DIR__ . '/Common/StringExtensions.php';
 
+require_once __DIR__ . '/BaseClasses/HtmlController.php';
+
 require_once __DIR__ . '/FileIo/FileIoWrapper.php';
 require_once __DIR__ . '/FileIo/FileReader.php';
 

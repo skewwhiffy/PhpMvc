@@ -1,7 +1,6 @@
 <?php namespace Framework\BaseClasses;
 
 use Framework\Common\StringExtensions;
-use Framework\Exceptions\NotImplementedException;
 use Framework\FileIo\FileReader;
 use Framework\FileIo\IFileReader;
 

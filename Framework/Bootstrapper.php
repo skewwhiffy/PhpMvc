@@ -12,8 +12,17 @@ $controllers = new FileReader(__DIR__ . '/../Site/Controllers');
 $routing = new ControllerRouting($controllers, $request);
 if (!$routing->shouldInvoke())
 {
-    throw new NotImplementedException('I don\'t know what to do');
+    $controllerClassName = 'HomeController';
+    $actionName = 'index';
+    $actionArgs = [];
+    //throw new NotImplementedException('I don\'t know what to do');
+}
+else
+{
+    $controllerClassName = $routing->controllerClassName();
+    $actionName = $routing->actionName();
+    $actionArgs = $routing->actionArgs();
 }
 $invoker = new MethodInvoker($controllers);
-$controller = $invoker->getInstance($routing->controllerClassName(), []);
-$invoker->invokeMethodOnInstance($controller, $routing->actionName(), $routing->actionArgs());
+$controller = $invoker->getInstance($controllerClassName, []);
+$invoker->invokeMethodOnInstance($controller, $actionName, $actionArgs);

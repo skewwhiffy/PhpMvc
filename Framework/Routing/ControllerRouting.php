@@ -62,7 +62,12 @@ class ControllerRouting
      */
     public function actionName()
     {
-        return $this->paths->splitPath($this->request->getUri())[1];
+        $action = $this->paths->splitPath($this->request->getUri())[1];
+        if (empty($action))
+        {
+            return 'index';
+        }
+        return $action;
     }
 
     /**
