@@ -3,3 +3,4 @@ vendor
 Instance
 Content
 composer.lock
+/nbproject/private/

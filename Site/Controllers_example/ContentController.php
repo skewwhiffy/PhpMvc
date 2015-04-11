@@ -16,7 +16,7 @@ class ContentController
     public function __construct()
     {
         $this->paths = new PathExtensions();
-        $this->files = new FileReader(__DIR__ . '/../../Content');
+        $this->files = new FileReader(__DIR__ . '/../Content');
     }
 
     public function __catchAll()

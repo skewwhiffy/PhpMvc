@@ -73,6 +73,9 @@ class FileReader implements IFileReader
         $fullPath = $this->extensions->joinPaths($this->directory, $path);
         $subFolders = [];
         $files = [];
+        if (!file_exists($fullPath)){
+            return $files;
+        }
         $directoryIterator = new RecursiveDirectoryIterator(
             $fullPath,
             RecursiveDirectoryIterator::SKIP_DOTS);

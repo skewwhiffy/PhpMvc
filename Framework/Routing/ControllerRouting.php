@@ -46,7 +46,8 @@ class ControllerRouting
      */
     public function controllerName()
     {
-        return $this->paths->splitPath($this->request->getUri())[0];
+        $pathsSplit = $this->paths->splitPath($this->request->getUri());
+        return count($pathsSplit) > 0 ? $pathsSplit[0] : '';
     }
 
     /**

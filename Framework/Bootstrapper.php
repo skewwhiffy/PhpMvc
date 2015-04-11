@@ -15,7 +15,7 @@ if (!$routing->shouldInvoke())
     $controllerClassName = 'HomeController';
     $actionName = 'index';
     $actionArgs = [];
-    //throw new NotImplementedException('I don\'t know what to do');
+    throw new NotImplementedException('I don\'t know what to do');
 }
 else
 {
